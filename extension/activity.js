@@ -8,8 +8,7 @@
   let enabled = true;
   let reducedMotion = false;
   let lastAction = 0;
-  const STATUS_CUE_MS = 4000;
-  const SENSITIVE_ACTIONS = new Set(["type", "fill", "fillform", "upload"]);
+  let frameNodes = null;
 
   function canShow() {
     return enabled && document.visibilityState === "visible" && document.hasFocus();
@@ -35,12 +34,18 @@
       .scroll.right{right:clamp(24px,4vw,48px)}.scroll.left{left:clamp(24px,4vw,48px)}
       .scroll:after{content:"";position:absolute;left:10px;top:18px;width:6px;height:6px;border-right:2px solid #d85b28;border-bottom:2px solid #d85b28;transform:rotate(45deg);animation:arrow .7s ease-in-out infinite alternate}
       .scroll.up:after{transform:rotate(225deg)}
-      .status{right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));max-width:min(360px,calc(100vw - 28px));padding:10px 13px;border:1px solid color-mix(in srgb,#d85b28 55%,transparent);border-radius:10px;background:Canvas;color:CanvasText;box-shadow:0 5px 18px rgb(0 0 0 / 18%);font:600 13px/1.35 system-ui,sans-serif}
-      .status.running{border-color:#238636}.status.failed{border-color:#b42318}
+      .frame{inset:0;box-shadow:inset 0 0 0 1px rgba(216,91,40,.45)}
+      .aur{left:0;top:0;width:44vmax;height:44vmax;border-radius:50%;filter:blur(64px);opacity:.5;will-change:transform}
+      .aur.a{background:radial-gradient(circle,rgba(216,91,40,.85),transparent 65%);animation:aurA 9s ease-in-out infinite alternate}
+      .aur.b{background:radial-gradient(circle,rgba(255,179,71,.75),transparent 65%);animation:aurB 12s ease-in-out infinite alternate}
+      .aur.c{background:radial-gradient(circle,rgba(110,168,255,.55),transparent 65%);animation:aurC 15s ease-in-out infinite alternate}
       @keyframes pulse{from{opacity:.9;scale:.35}to{opacity:0;scale:1.8}}
       @keyframes typing{0%,100%{opacity:0}20%,80%{opacity:1}}
       @keyframes arrow{to{translate:0 7px}}
-      @media(prefers-reduced-motion:reduce){.cue{animation:none!important}.pulse{opacity:.8}.typing{opacity:.8}.scroll:after{animation:none}}
+      @keyframes aurA{0%{transform:translate(-22vmax,-22vmax)}50%{transform:translate(calc(100vw - 22vmax),-22vmax)}100%{transform:translate(calc(100vw - 22vmax),calc(100vh - 22vmax))}}
+      @keyframes aurB{0%{transform:translate(calc(100vw - 22vmax),calc(100vh - 22vmax))}50%{transform:translate(-22vmax,calc(100vh - 22vmax))}100%{transform:translate(-22vmax,-22vmax)}}
+      @keyframes aurC{0%{transform:translate(-22vmax,calc(50vh - 22vmax))}50%{transform:translate(calc(50vw - 22vmax),calc(100vh - 22vmax))}100%{transform:translate(calc(100vw - 22vmax),calc(50vh - 22vmax))}}
+      @media(prefers-reduced-motion:reduce){.cue{animation:none!important}.pulse{opacity:.8}.typing{opacity:.8}.scroll:after{animation:none}.aur{opacity:.3}}
     </style>`;
     document.documentElement.appendChild(host);
     return shadow;
@@ -95,49 +100,37 @@
     addCue(`scroll ${cueDirection} left`, {}, motion);
     addCue(`scroll ${cueDirection} right`, {}, motion);
   }
-  function clear() { timers.forEach(clearTimeout); timers.clear(); cues.clear(); if (host) host.remove(); host = null; shadow = null; }
-  function actionName(item, active) { return SleeperActionLabels.describe(item, active); }
-  function statusText(item, active) {
-    const cmd = String((item && (item.cmd || item.action)) || "").toLowerCase();
-    const raw = String((item && item.status) || "").toLowerCase();
-    const state = active || raw === "running" || raw === "pending" || raw === "started"
-      ? "Working" : (raw === "failed" || raw === "error" || item && item.ok === false ? "Failed" : "Done");
-    // Deliberately omit target/value details for all value-bearing commands.
-    const target = SENSITIVE_ACTIONS.has(cmd) ? "" : (item && item.target ? ` · ${String(item.target).slice(0, 72)}` : "");
-    return `${actionName(item, active)}${target}`;
+  function clear() {
+    timers.forEach(clearTimeout);
+    timers.clear();
+    cues.clear();
+    frameNodes = null;
+    if (host) host.remove();
+    host = null;
+    shadow = null;
   }
-  function clearStatus() {
-    const prior = cues.get("status");
-    if (!prior) return;
-    if (prior.timer !== null) {
-      clearTimeout(prior.timer);
-      timers.delete(prior.timer);
-    }
-    prior.node.remove();
-    cues.delete("status");
-  }
-  function statusCue(item, active) {
-    if (!item || !canShow()) return;
+  // The aurora frame is the agent-activity signal: a thin edge line plus three soft
+  // color washes drifting along the viewport edges while an action is in progress.
+  function frameShow() {
+    if (frameNodes || !canShow()) return;
     const layer = ensureLayer();
-    clearStatus();
-    const state = active ? "running" : (String(item.status || "").toLowerCase() === "failed" || item.ok === false ? "failed" : "done");
-    const cue = document.createElement("span");
-    cue.className = `cue status ${state}`;
-    cue.textContent = statusText(item, active);
-    layer.appendChild(cue);
-    // Keep the current action visible until storage reports its completion; completed
-    // outcomes stay long enough to be noticed on a phone.
-    const timer = active ? null : schedule(() => { cues.delete("status"); cue.remove(); }, STATUS_CUE_MS);
-    cues.set("status", { node: cue, timer });
+    const make = (className) => {
+      const node = document.createElement("span");
+      node.className = "cue " + className;
+      layer.appendChild(node);
+      return node;
+    };
+    frameNodes = [make("frame"), make("aur a"), make("aur b"), make("aur c")];
+  }
+  function frameHide() {
+    if (!frameNodes) return;
+    frameNodes.forEach((node) => node.remove());
+    frameNodes = null;
   }
   function renderStored(value) {
     const current = value && (value.current_action || value.action_current);
     const active = Boolean(current || value && value.action_in_progress);
-    if (!active) { clearStatus(); return; }
-    const log = Array.isArray(value && value.action_log) ? value.action_log : [];
-    const item = current || log.slice().sort((a, b) => (Number(b.ts) || 0) - (Number(a.ts) || 0))[0];
-    if (!item) { clearStatus(); return; }
-    statusCue(item, Boolean(current));
+    if (active) { frameShow(); } else { frameHide(); }
   }
   function configure(value) { enabled = value !== false; if (!enabled) clear(); }
   function load() {

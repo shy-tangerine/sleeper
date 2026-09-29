@@ -4,6 +4,7 @@ const labelsSource = require("fs").readFileSync(require("path").join(__dirname, 
 const source = require("fs").readFileSync(require("path").join(__dirname, "../extension/activity.js"), "utf8");
 assert.ok(source.includes("storage.onChanged"), "activity settings update live");
 assert.ok(source.includes("aria-hidden"), "activity host is hidden from assistive technology");
+assert.ok(!source.includes(".status{"), "status toast cue is retired in favor of the aurora frame");
 assert.match(source, /\.scroll\{top:50%;[^}]+transform:translateY\(-50%\)/, "scroll cue stays centered at every frame");
 assert.match(source, /\.scroll:after\{[^}]+left:10px;top:18px/, "scroll arrow is optically centered");
 
@@ -97,7 +98,9 @@ const live = createHarness({
   action_in_progress: true,
   action_log: [],
 });
-assert.strictEqual(live.getShadow().children.filter((node) => node.isConnected).length, 1, "live action shows feedback");
+assert.strictEqual(live.getShadow().children.filter((node) => node.isConnected).length, 4, "live action shows the aurora frame and its three washes");
+assert.ok(live.getShadow().children.some((node) => node.isConnected && node.className === "cue frame"), "aurora edge line shows while live");
+assert.strictEqual(live.getShadow().children.filter((node) => node.isConnected && node.className.startsWith("cue aur ")).length, 3, "three aurora washes show while live");
 live.change({
   current_action: { oldValue: live, newValue: null },
   action_in_progress: { oldValue: true, newValue: false },
