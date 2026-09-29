@@ -1,0 +1,141 @@
+{
+  "iterations": 5,
+  "measurement": {
+    "browser_rss_scope": "sum of RSS for Chromium processes with the fresh disposable profile's --user-data-dir; not physical-memory total",
+    "sequence": "six MCP tools/call requests only; excludes out-of-band Playwright verifier"
+  },
+  "median_browser_rss_bytes": 1181450240,
+  "median_sequence_ms": 280.829,
+  "operations": [
+    "navigate",
+    "read_h1",
+    "type",
+    "click",
+    "wait_delayed_text",
+    "read_result"
+  ],
+  "runs": [
+    {
+      "browser_process_scope": {
+        "cpu_seconds": 5.62,
+        "pids": [
+          483361,
+          483365,
+          483370,
+          483380,
+          483381,
+          483406,
+          483411,
+          483421,
+          483458,
+          483460,
+          483481,
+          483495
+        ],
+        "rss_bytes": 1161043968,
+        "scope": "all Chromium processes whose command line has this disposable --user-data-dir"
+      },
+      "run": 1,
+      "sequence_ms": 285.491,
+      "status": "pass"
+    },
+    {
+      "browser_process_scope": {
+        "cpu_seconds": 6.18,
+        "pids": [
+          483361,
+          483365,
+          483370,
+          483380,
+          483381,
+          483406,
+          483411,
+          483421,
+          483458,
+          483460,
+          483481,
+          483495
+        ],
+        "rss_bytes": 1171357696,
+        "scope": "all Chromium processes whose command line has this disposable --user-data-dir"
+      },
+      "run": 2,
+      "sequence_ms": 279.31,
+      "status": "pass"
+    },
+    {
+      "browser_process_scope": {
+        "cpu_seconds": 6.75,
+        "pids": [
+          483361,
+          483365,
+          483370,
+          483380,
+          483381,
+          483406,
+          483411,
+          483421,
+          483458,
+          483460,
+          483481,
+          483495
+        ],
+        "rss_bytes": 1181450240,
+        "scope": "all Chromium processes whose command line has this disposable --user-data-dir"
+      },
+      "run": 3,
+      "sequence_ms": 279.672,
+      "status": "pass"
+    },
+    {
+      "browser_process_scope": {
+        "cpu_seconds": 7.31,
+        "pids": [
+          483361,
+          483365,
+          483370,
+          483380,
+          483381,
+          483406,
+          483411,
+          483421,
+          483458,
+          483460,
+          483481,
+          483495
+        ],
+        "rss_bytes": 1195012096,
+        "scope": "all Chromium processes whose command line has this disposable --user-data-dir"
+      },
+      "run": 4,
+      "sequence_ms": 280.829,
+      "status": "pass"
+    },
+    {
+      "browser_process_scope": {
+        "cpu_seconds": 7.89,
+        "pids": [
+          483361,
+          483365,
+          483370,
+          483380,
+          483381,
+          483406,
+          483411,
+          483421,
+          483458,
+          483460,
+          483481,
+          483495
+        ],
+        "rss_bytes": 1207005184,
+        "scope": "all Chromium processes whose command line has this disposable --user-data-dir"
+      },
+      "run": 5,
+      "sequence_ms": 282.5,
+      "status": "pass"
+    }
+  ],
+  "schema": "sleeper-mcp-matched-browser-primitives/v1",
+  "status": "pass"
+}

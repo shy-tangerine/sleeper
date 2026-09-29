@@ -1,0 +1,77 @@
+{
+  "manifest_version": 2,
+  "name": "Sleeper",
+  "version": "2.0.1",
+  "description": "DOM bridge for computer-use: routes daemon commands to the active tab's content script.",
+  "permissions": [
+    "tabs",
+    "storage",
+    "nativeMessaging",
+    "webRequest",
+    "ws://127.0.0.1:8789/*",
+    "<all_urls>"
+  ],
+  "browser_action": {
+    "default_title": "Sleeper controls",
+    "default_popup": "popup.html"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "background": {
+    "scripts": [
+      "action-labels.js",
+      "api_host_policy.js",
+      "screenshot.js",
+      "background_tabs.js",
+      "action-state.js",
+      "background_network.js",
+      "background_page_hooks.js",
+      "daemon_endpoint.js",
+      "mobile_onboarding.js",
+      "tailscale_setup.js",
+      "background.js"
+    ],
+    "persistent": true
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "locators.js",
+        "action-labels.js",
+        "activity.js",
+        "sleeper.js",
+        "tailscale_setup.js",
+        "content.js"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "sleeper@shy-tangerine",
+      "strict_min_version": "140.0",
+      "data_collection_permissions": {
+        "required": [
+          "browsingActivity",
+          "websiteContent",
+          "websiteActivity"
+        ]
+      }
+    },
+    "gecko_android": {
+      "strict_min_version": "142.0"
+    }
+  },
+  "icons": {
+    "16": "icon16.png",
+    "32": "icon32.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}

@@ -1,0 +1,71 @@
+__pycache__/
+*.py[cod]
+*.log
+*.tmp
+.DS_Store
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+dist/
+coverage/
+.coverage
+.pytest_cache/
+.mypy_cache/
+node_modules/
+*.egg-info/
+
+# Local analysis/cache state
+.repowise/
+.codebase-memory/
+.sieve/
+.mcp.json
+.repowise-workspace.yaml
+
+# Maintainer-only planning, research, and generated release state
+/wiki/
+/research/
+/build/
+/dist/
+/release-candidate/
+# Internal development notes (not for the public tree)
+/skills/
+/AGENTS.md
+/AUDIT.md
+/DESIGN.md
+/EXTENSION-PLAN.md
+/HANDOFF-*.md
+/ZEN-BROWSER-FIELD-REPORT.md
+
+# Credentials and local service state
+*.pem
+*.key
+browser-sleeper-token
+
+# Disposable browser and benchmark artifacts
+/.playwright-mcp/
+/AppDir/
+/runs/
+/squashfs-root
+
+# Local benchmark reruns; keep the reviewed published dataset
+/benchmarks/results/*
+!/benchmarks/results/matched-browser-interface-samples.json
+!/benchmarks/results/matched-token-samples.json
+!/benchmarks/results/cdp-matched-results.json
+!/benchmarks/results/sleeper-mcp-matched-results.json
+!/benchmarks/results/playwright-mcp-token-results.json
+!/benchmarks/results/sleeper-cli-protocol-capture.json
+!/benchmarks/results/opencli-cli-protocol-capture.json
+
+!benchmarks/results/mcp-discovery-sample.json
+
+# Distributed plugin MCP declarations (no credentials).
+!plugins/claude/sleeper/.mcp.json
+!plugins/codex/sleeper/.mcp.json
+.claude/
+.vscode/
+
+# Local-only release planning; never track or export.
+/openspec/

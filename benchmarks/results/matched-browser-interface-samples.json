@@ -1,0 +1,208 @@
+{
+  "sleeper": {
+    "schema": "sleeper-matched-browser-primitives/v2",
+    "status": "pass",
+    "startup_ms": 818.157,
+    "operations": [
+      "navigate",
+      "read_h1",
+      "type",
+      "click",
+      "wait_delayed_text",
+      "read_result"
+    ],
+    "sequence_ms": [
+      2443.322,
+      1284.091,
+      917.811,
+      933.826,
+      909.221
+    ],
+    "runs": [
+      {
+        "run": 1,
+        "status": "pass",
+        "sequence_ms": 2443.322,
+        "browser_process_scope": {
+          "cpu_seconds_delta": 2.7,
+          "rss_bytes": 1194700800,
+          "scope": "all Chromium processes whose command line has this disposable --user-data-dir",
+          "process_count": 12
+        },
+        "controller_process_scope": {
+          "cpu_seconds_delta": 0.03,
+          "rss_bytes": 44167168,
+          "scope": "Sleeper local daemon process; excludes per-command CLI child and browser"
+        }
+      },
+      {
+        "run": 2,
+        "status": "pass",
+        "sequence_ms": 1284.091,
+        "browser_process_scope": {
+          "cpu_seconds_delta": 0.37,
+          "rss_bytes": 1166163968,
+          "scope": "all Chromium processes whose command line has this disposable --user-data-dir",
+          "process_count": 12
+        },
+        "controller_process_scope": {
+          "cpu_seconds_delta": 0.05,
+          "rss_bytes": 44191744,
+          "scope": "Sleeper local daemon process; excludes per-command CLI child and browser"
+        }
+      },
+      {
+        "run": 3,
+        "status": "pass",
+        "sequence_ms": 917.811,
+        "browser_process_scope": {
+          "cpu_seconds_delta": 0.22,
+          "rss_bytes": 1197182976,
+          "scope": "all Chromium processes whose command line has this disposable --user-data-dir",
+          "process_count": 12
+        },
+        "controller_process_scope": {
+          "cpu_seconds_delta": 0.09,
+          "rss_bytes": 44220416,
+          "scope": "Sleeper local daemon process; excludes per-command CLI child and browser"
+        }
+      },
+      {
+        "run": 4,
+        "status": "pass",
+        "sequence_ms": 933.826,
+        "browser_process_scope": {
+          "cpu_seconds_delta": 0.21,
+          "rss_bytes": 1218113536,
+          "scope": "all Chromium processes whose command line has this disposable --user-data-dir",
+          "process_count": 12
+        },
+        "controller_process_scope": {
+          "cpu_seconds_delta": 0.11,
+          "rss_bytes": 44244992,
+          "scope": "Sleeper local daemon process; excludes per-command CLI child and browser"
+        }
+      },
+      {
+        "run": 5,
+        "status": "pass",
+        "sequence_ms": 909.221,
+        "browser_process_scope": {
+          "cpu_seconds_delta": 0.22,
+          "rss_bytes": 1170169856,
+          "scope": "all Chromium processes whose command line has this disposable --user-data-dir",
+          "process_count": 12
+        },
+        "controller_process_scope": {
+          "cpu_seconds_delta": 0.14,
+          "rss_bytes": 44249088,
+          "scope": "Sleeper local daemon process; excludes per-command CLI child and browser"
+        }
+      }
+    ],
+    "measurement": "Verified six-operation timing samples; browser RSS is summed profile-scoped process RSS, not physical-memory usage."
+  },
+  "opencli": {
+    "schema": "opencli-matched-browser-primitives/v1",
+    "status": "pass",
+    "startup_ms": 1771.521,
+    "operations": [
+      "navigate",
+      "read_h1",
+      "type",
+      "click",
+      "wait_delayed_text",
+      "read_result"
+    ],
+    "sequence_ms": [
+      6586.64,
+      4025.798,
+      3898.712,
+      3935.764,
+      4010.886
+    ],
+    "runs": [
+      {
+        "run": 1,
+        "status": "pass",
+        "sequence_ms": 6586.64,
+        "browser_process_scope": {
+          "cpu_seconds_delta": 5.52,
+          "rss_bytes": 1254334464,
+          "scope": "all Chromium processes whose command line has this disposable --user-data-dir",
+          "process_count": 13
+        },
+        "controller_process_scope": {
+          "cpu_seconds_delta": 0.05,
+          "rss_bytes": 43913216,
+          "scope": "OpenCLI persistent local bridge daemon; excludes per-command CLI child and browser"
+        }
+      },
+      {
+        "run": 2,
+        "status": "pass",
+        "sequence_ms": 4025.798,
+        "browser_process_scope": {
+          "cpu_seconds_delta": 0.58,
+          "rss_bytes": 1273729024,
+          "scope": "all Chromium processes whose command line has this disposable --user-data-dir",
+          "process_count": 13
+        },
+        "controller_process_scope": {
+          "cpu_seconds_delta": 0.07,
+          "rss_bytes": 43921408,
+          "scope": "OpenCLI persistent local bridge daemon; excludes per-command CLI child and browser"
+        }
+      },
+      {
+        "run": 3,
+        "status": "pass",
+        "sequence_ms": 3898.712,
+        "browser_process_scope": {
+          "cpu_seconds_delta": 0.54,
+          "rss_bytes": 1277313024,
+          "scope": "all Chromium processes whose command line has this disposable --user-data-dir",
+          "process_count": 13
+        },
+        "controller_process_scope": {
+          "cpu_seconds_delta": 0.1,
+          "rss_bytes": 43925504,
+          "scope": "OpenCLI persistent local bridge daemon; excludes per-command CLI child and browser"
+        }
+      },
+      {
+        "run": 4,
+        "status": "pass",
+        "sequence_ms": 3935.764,
+        "browser_process_scope": {
+          "cpu_seconds_delta": 0.54,
+          "rss_bytes": 1278398464,
+          "scope": "all Chromium processes whose command line has this disposable --user-data-dir",
+          "process_count": 13
+        },
+        "controller_process_scope": {
+          "cpu_seconds_delta": 0.13,
+          "rss_bytes": 43933696,
+          "scope": "OpenCLI persistent local bridge daemon; excludes per-command CLI child and browser"
+        }
+      },
+      {
+        "run": 5,
+        "status": "pass",
+        "sequence_ms": 4010.886,
+        "browser_process_scope": {
+          "cpu_seconds_delta": 0.59,
+          "rss_bytes": 1280847872,
+          "scope": "all Chromium processes whose command line has this disposable --user-data-dir",
+          "process_count": 13
+        },
+        "controller_process_scope": {
+          "cpu_seconds_delta": 0.16,
+          "rss_bytes": 43941888,
+          "scope": "OpenCLI persistent local bridge daemon; excludes per-command CLI child and browser"
+        }
+      }
+    ],
+    "measurement": "Verified six-operation timing samples; browser RSS is summed while the result page remains open, before out-of-band verification and session cleanup. It is profile-scoped process RSS, not physical-memory usage."
+  }
+}

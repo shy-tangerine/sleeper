@@ -1,0 +1,14 @@
+[Unit]
+# .sleeper-managed-service
+Description=Sleeper browser automation daemon
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=__SLEEPER_ROOT_PATH__
+ExecStart=__SLEEPER_PYTHON__ __SLEEPER_DAEMON__
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=default.target

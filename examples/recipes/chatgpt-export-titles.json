@@ -1,0 +1,14 @@
+{
+  "name": "chatgpt-export-titles",
+  "description": "List all ChatGPT conversation titles via the backend API",
+  "steps": [
+    {
+      "cmd": "api",
+      "args": {
+        "url": "/backend-api/conversations?offset=0&limit=100&order=updated",
+        "method": "GET"
+      },
+      "extract": ".items | map({id: .id, title: .title})"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "name": "ig-profile",
+  "description": "Instagram profile: bio, follower/post counts, avatar image, and top reel links. IG DOM is React/virtualized, so selectors are illustrative and may need per-account tuning.",
+  "url": "https://www.instagram.com/",
+  "selector": "",
+  "fields": {
+    "bio": {
+      "sel": ".x1lliihq.x1plvlek",
+      "get": "text"
+    },
+    "followers": {
+      "sel": "header li:nth-child(2) span",
+      "get": "text"
+    },
+    "posts": {
+      "sel": "header li:nth-child(1) span",
+      "get": "text"
+    },
+    "avatar": {
+      "sel": "header img",
+      "get": "attr:src"
+    },
+    "reels": {
+      "sel": "a[href*='/reel/']",
+      "get": "href"
+    }
+  }
+}

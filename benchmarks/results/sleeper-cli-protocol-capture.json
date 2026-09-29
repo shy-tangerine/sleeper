@@ -1,0 +1,971 @@
+{
+  "iterations": 5,
+  "measurement": {
+    "excluded": [
+      "HTTP headers",
+      "HTTP framing",
+      "CLI stdout/stderr",
+      "model prompts and reasoning",
+      "screenshots"
+    ],
+    "fixture": "synthetic local page; no external network",
+    "protocol": "HTTP JSON request/response bodies for CLI POST /command"
+  },
+  "operations": [
+    "navigate",
+    "read_h1",
+    "type",
+    "click",
+    "wait_delayed_text",
+    "read_result"
+  ],
+  "runs": [
+    {
+      "request_tokens": 143,
+      "response_tokens": 256,
+      "run": 1,
+      "status": "pass",
+      "steps": [
+        {
+          "operation": "navigate",
+          "proxy_ms": 7.819,
+          "request_bytes": 75,
+          "request_json": {
+            "args": {
+              "url": "http://127.0.0.1:42031/"
+            },
+            "cmd": "goto",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"goto\",\"args\":{\"url\":\"http://127.0.0.1:42031/\"},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"goto\",\"args\":{\"url\":\"http://127.0.0.1:<fixture-port>/\"},\"profile\":\"default\"}",
+          "response_bytes": 76,
+          "response_json": {
+            "id": 4,
+            "ok": true,
+            "result": {
+              "tabId": 1725743480,
+              "url": "about:blank"
+            }
+          },
+          "response_text": "{\"id\": 4, \"ok\": true, \"result\": {\"tabId\": 1725743480, \"url\": \"about:blank\"}}",
+          "response_text_sanitized": "{\"id\": 4, \"ok\": true, \"result\": {\"tabId\": <tab-id>, \"url\": \"about:blank\"}}",
+          "status": 200
+        },
+        {
+          "operation": "read_h1",
+          "proxy_ms": 29.435,
+          "request_bytes": 73,
+          "request_json": {
+            "args": {
+              "selector": "h1",
+              "what": "text"
+            },
+            "cmd": "read",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"read\",\"args\":{\"selector\":\"h1\",\"what\":\"text\"},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"read\",\"args\":{\"selector\":\"h1\",\"what\":\"text\"},\"profile\":\"default\"}",
+          "response_bytes": 72,
+          "response_json": {
+            "id": 6,
+            "ok": true,
+            "result": {
+              "text": "Synthetic browser benchmark"
+            }
+          },
+          "response_text": "{\"id\": 6, \"ok\": true, \"result\": {\"text\": \"Synthetic browser benchmark\"}}",
+          "response_text_sanitized": "{\"id\": 6, \"ok\": true, \"result\": {\"text\": \"Synthetic browser benchmark\"}}",
+          "status": 200
+        },
+        {
+          "operation": "type",
+          "proxy_ms": 12.233,
+          "request_bytes": 113,
+          "request_json": {
+            "args": {
+              "clear": false,
+              "selector": "#input",
+              "stealth": false,
+              "text": "cli-wire-1"
+            },
+            "cmd": "type",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"type\",\"args\":{\"selector\":\"#input\",\"text\":\"cli-wire-1\",\"clear\":false,\"stealth\":false},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"type\",\"args\":{\"selector\":\"#input\",\"text\":\"cli-wire-1\",\"clear\":false,\"stealth\":false},\"profile\":\"default\"}",
+          "response_bytes": 90,
+          "response_json": {
+            "id": 7,
+            "ok": true,
+            "result": {
+              "stealth": false,
+              "tag": "input",
+              "typed": "cli-wire-1"
+            }
+          },
+          "response_text": "{\"id\": 7, \"ok\": true, \"result\": {\"typed\": \"cli-wire-1\", \"tag\": \"input\", \"stealth\": false}}",
+          "response_text_sanitized": "{\"id\": 7, \"ok\": true, \"result\": {\"typed\": \"cli-wire-1\", \"tag\": \"input\", \"stealth\": false}}",
+          "status": 200
+        },
+        {
+          "operation": "click",
+          "proxy_ms": 5.797,
+          "request_bytes": 65,
+          "request_json": {
+            "args": {
+              "selector": "#action"
+            },
+            "cmd": "click",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"click\",\"args\":{\"selector\":\"#action\"},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"click\",\"args\":{\"selector\":\"#action\"},\"profile\":\"default\"}",
+          "response_bytes": 89,
+          "response_json": {
+            "id": 8,
+            "ok": true,
+            "result": {
+              "clicked": true,
+              "tag": "button",
+              "text": "Run action"
+            }
+          },
+          "response_text": "{\"id\": 8, \"ok\": true, \"result\": {\"clicked\": true, \"tag\": \"button\", \"text\": \"Run action\"}}",
+          "response_text_sanitized": "{\"id\": 8, \"ok\": true, \"result\": {\"clicked\": true, \"tag\": \"button\", \"text\": \"Run action\"}}",
+          "status": 200
+        },
+        {
+          "operation": "wait_delayed_text",
+          "proxy_ms": 157.777,
+          "request_bytes": 94,
+          "request_json": {
+            "args": {
+              "text": "Delayed state ready",
+              "timeout_ms": 5000
+            },
+            "cmd": "waitText",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"waitText\",\"args\":{\"text\":\"Delayed state ready\",\"timeout_ms\":5000},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"waitText\",\"args\":{\"text\":\"Delayed state ready\",\"timeout_ms\":5000},\"profile\":\"default\"}",
+          "response_bytes": 305,
+          "response_json": {
+            "id": 9,
+            "ok": true,
+            "result": {
+              "el": {
+                "classes": [],
+                "href": null,
+                "id": "delayed",
+                "name": null,
+                "placeholder": null,
+                "rect": {
+                  "h": 18,
+                  "w": 1264,
+                  "x": 8,
+                  "y": 185
+                },
+                "tag": "p",
+                "text": "Delayed state ready",
+                "type": null,
+                "value": null,
+                "visible": true
+              },
+              "found": true,
+              "text": "Delayed state ready"
+            }
+          },
+          "response_text": "{\"id\": 9, \"ok\": true, \"result\": {\"found\": true, \"text\": \"Delayed state ready\", \"el\": {\"tag\": \"p\", \"id\": \"delayed\", \"classes\": [], \"name\": null, \"type\": null, \"text\": \"Delayed state ready\", \"value\": null, \"placeholder\": null, \"href\": null, \"rect\": {\"x\": 8, \"y\": 185, \"w\": 1264, \"h\": 18}, \"visible\": true}}}",
+          "response_text_sanitized": "{\"id\": 9, \"ok\": true, \"result\": {\"found\": true, \"text\": \"Delayed state ready\", \"el\": {\"tag\": \"p\", \"id\": \"delayed\", \"classes\": [], \"name\": null, \"type\": null, \"text\": \"Delayed state ready\", \"value\": null, \"placeholder\": null, \"href\": null, \"rect\": {\"x\": 8, \"y\": 185, \"w\": 1264, \"h\": 18}, \"visible\": true}}}",
+          "status": 200
+        },
+        {
+          "operation": "read_result",
+          "proxy_ms": 5.046,
+          "request_bytes": 78,
+          "request_json": {
+            "args": {
+              "selector": "#result",
+              "what": "text"
+            },
+            "cmd": "read",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"read\",\"args\":{\"selector\":\"#result\",\"what\":\"text\"},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"read\",\"args\":{\"selector\":\"#result\",\"what\":\"text\"},\"profile\":\"default\"}",
+          "response_bytes": 61,
+          "response_json": {
+            "id": 10,
+            "ok": true,
+            "result": {
+              "text": "Action complete"
+            }
+          },
+          "response_text": "{\"id\": 10, \"ok\": true, \"result\": {\"text\": \"Action complete\"}}",
+          "response_text_sanitized": "{\"id\": 10, \"ok\": true, \"result\": {\"text\": \"Action complete\"}}",
+          "status": 200
+        }
+      ],
+      "total_tokens": 399
+    },
+    {
+      "request_tokens": 143,
+      "response_tokens": 266,
+      "run": 2,
+      "status": "pass",
+      "steps": [
+        {
+          "operation": "navigate",
+          "proxy_ms": 12.418,
+          "request_bytes": 75,
+          "request_json": {
+            "args": {
+              "url": "http://127.0.0.1:42031/"
+            },
+            "cmd": "goto",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"goto\",\"args\":{\"url\":\"http://127.0.0.1:42031/\"},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"goto\",\"args\":{\"url\":\"http://127.0.0.1:<fixture-port>/\"},\"profile\":\"default\"}",
+          "response_bytes": 89,
+          "response_json": {
+            "id": 11,
+            "ok": true,
+            "result": {
+              "tabId": 1725743480,
+              "url": "http://127.0.0.1:42031/"
+            }
+          },
+          "response_text": "{\"id\": 11, \"ok\": true, \"result\": {\"tabId\": 1725743480, \"url\": \"http://127.0.0.1:42031/\"}}",
+          "response_text_sanitized": "{\"id\": 11, \"ok\": true, \"result\": {\"tabId\": <tab-id>, \"url\": \"http://127.0.0.1:<fixture-port>/\"}}",
+          "status": 200
+        },
+        {
+          "operation": "read_h1",
+          "proxy_ms": 14.667,
+          "request_bytes": 73,
+          "request_json": {
+            "args": {
+              "selector": "h1",
+              "what": "text"
+            },
+            "cmd": "read",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"read\",\"args\":{\"selector\":\"h1\",\"what\":\"text\"},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"read\",\"args\":{\"selector\":\"h1\",\"what\":\"text\"},\"profile\":\"default\"}",
+          "response_bytes": 73,
+          "response_json": {
+            "id": 12,
+            "ok": true,
+            "result": {
+              "text": "Synthetic browser benchmark"
+            }
+          },
+          "response_text": "{\"id\": 12, \"ok\": true, \"result\": {\"text\": \"Synthetic browser benchmark\"}}",
+          "response_text_sanitized": "{\"id\": 12, \"ok\": true, \"result\": {\"text\": \"Synthetic browser benchmark\"}}",
+          "status": 200
+        },
+        {
+          "operation": "type",
+          "proxy_ms": 9.624,
+          "request_bytes": 113,
+          "request_json": {
+            "args": {
+              "clear": false,
+              "selector": "#input",
+              "stealth": false,
+              "text": "cli-wire-2"
+            },
+            "cmd": "type",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"type\",\"args\":{\"selector\":\"#input\",\"text\":\"cli-wire-2\",\"clear\":false,\"stealth\":false},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"type\",\"args\":{\"selector\":\"#input\",\"text\":\"cli-wire-2\",\"clear\":false,\"stealth\":false},\"profile\":\"default\"}",
+          "response_bytes": 91,
+          "response_json": {
+            "id": 14,
+            "ok": true,
+            "result": {
+              "stealth": false,
+              "tag": "input",
+              "typed": "cli-wire-2"
+            }
+          },
+          "response_text": "{\"id\": 14, \"ok\": true, \"result\": {\"typed\": \"cli-wire-2\", \"tag\": \"input\", \"stealth\": false}}",
+          "response_text_sanitized": "{\"id\": 14, \"ok\": true, \"result\": {\"typed\": \"cli-wire-2\", \"tag\": \"input\", \"stealth\": false}}",
+          "status": 200
+        },
+        {
+          "operation": "click",
+          "proxy_ms": 21.145,
+          "request_bytes": 65,
+          "request_json": {
+            "args": {
+              "selector": "#action"
+            },
+            "cmd": "click",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"click\",\"args\":{\"selector\":\"#action\"},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"click\",\"args\":{\"selector\":\"#action\"},\"profile\":\"default\"}",
+          "response_bytes": 90,
+          "response_json": {
+            "id": 15,
+            "ok": true,
+            "result": {
+              "clicked": true,
+              "tag": "button",
+              "text": "Run action"
+            }
+          },
+          "response_text": "{\"id\": 15, \"ok\": true, \"result\": {\"clicked\": true, \"tag\": \"button\", \"text\": \"Run action\"}}",
+          "response_text_sanitized": "{\"id\": 15, \"ok\": true, \"result\": {\"clicked\": true, \"tag\": \"button\", \"text\": \"Run action\"}}",
+          "status": 200
+        },
+        {
+          "operation": "wait_delayed_text",
+          "proxy_ms": 168.443,
+          "request_bytes": 94,
+          "request_json": {
+            "args": {
+              "text": "Delayed state ready",
+              "timeout_ms": 5000
+            },
+            "cmd": "waitText",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"waitText\",\"args\":{\"text\":\"Delayed state ready\",\"timeout_ms\":5000},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"waitText\",\"args\":{\"text\":\"Delayed state ready\",\"timeout_ms\":5000},\"profile\":\"default\"}",
+          "response_bytes": 306,
+          "response_json": {
+            "id": 16,
+            "ok": true,
+            "result": {
+              "el": {
+                "classes": [],
+                "href": null,
+                "id": "delayed",
+                "name": null,
+                "placeholder": null,
+                "rect": {
+                  "h": 18,
+                  "w": 1264,
+                  "x": 8,
+                  "y": 185
+                },
+                "tag": "p",
+                "text": "Delayed state ready",
+                "type": null,
+                "value": null,
+                "visible": true
+              },
+              "found": true,
+              "text": "Delayed state ready"
+            }
+          },
+          "response_text": "{\"id\": 16, \"ok\": true, \"result\": {\"found\": true, \"text\": \"Delayed state ready\", \"el\": {\"tag\": \"p\", \"id\": \"delayed\", \"classes\": [], \"name\": null, \"type\": null, \"text\": \"Delayed state ready\", \"value\": null, \"placeholder\": null, \"href\": null, \"rect\": {\"x\": 8, \"y\": 185, \"w\": 1264, \"h\": 18}, \"visible\": true}}}",
+          "response_text_sanitized": "{\"id\": 16, \"ok\": true, \"result\": {\"found\": true, \"text\": \"Delayed state ready\", \"el\": {\"tag\": \"p\", \"id\": \"delayed\", \"classes\": [], \"name\": null, \"type\": null, \"text\": \"Delayed state ready\", \"value\": null, \"placeholder\": null, \"href\": null, \"rect\": {\"x\": 8, \"y\": 185, \"w\": 1264, \"h\": 18}, \"visible\": true}}}",
+          "status": 200
+        },
+        {
+          "operation": "read_result",
+          "proxy_ms": 14.562,
+          "request_bytes": 78,
+          "request_json": {
+            "args": {
+              "selector": "#result",
+              "what": "text"
+            },
+            "cmd": "read",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"read\",\"args\":{\"selector\":\"#result\",\"what\":\"text\"},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"read\",\"args\":{\"selector\":\"#result\",\"what\":\"text\"},\"profile\":\"default\"}",
+          "response_bytes": 61,
+          "response_json": {
+            "id": 17,
+            "ok": true,
+            "result": {
+              "text": "Action complete"
+            }
+          },
+          "response_text": "{\"id\": 17, \"ok\": true, \"result\": {\"text\": \"Action complete\"}}",
+          "response_text_sanitized": "{\"id\": 17, \"ok\": true, \"result\": {\"text\": \"Action complete\"}}",
+          "status": 200
+        }
+      ],
+      "total_tokens": 409
+    },
+    {
+      "request_tokens": 143,
+      "response_tokens": 266,
+      "run": 3,
+      "status": "pass",
+      "steps": [
+        {
+          "operation": "navigate",
+          "proxy_ms": 26.291,
+          "request_bytes": 75,
+          "request_json": {
+            "args": {
+              "url": "http://127.0.0.1:42031/"
+            },
+            "cmd": "goto",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"goto\",\"args\":{\"url\":\"http://127.0.0.1:42031/\"},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"goto\",\"args\":{\"url\":\"http://127.0.0.1:<fixture-port>/\"},\"profile\":\"default\"}",
+          "response_bytes": 89,
+          "response_json": {
+            "id": 18,
+            "ok": true,
+            "result": {
+              "tabId": 1725743480,
+              "url": "http://127.0.0.1:42031/"
+            }
+          },
+          "response_text": "{\"id\": 18, \"ok\": true, \"result\": {\"tabId\": 1725743480, \"url\": \"http://127.0.0.1:42031/\"}}",
+          "response_text_sanitized": "{\"id\": 18, \"ok\": true, \"result\": {\"tabId\": <tab-id>, \"url\": \"http://127.0.0.1:<fixture-port>/\"}}",
+          "status": 200
+        },
+        {
+          "operation": "read_h1",
+          "proxy_ms": 13.25,
+          "request_bytes": 73,
+          "request_json": {
+            "args": {
+              "selector": "h1",
+              "what": "text"
+            },
+            "cmd": "read",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"read\",\"args\":{\"selector\":\"h1\",\"what\":\"text\"},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"read\",\"args\":{\"selector\":\"h1\",\"what\":\"text\"},\"profile\":\"default\"}",
+          "response_bytes": 73,
+          "response_json": {
+            "id": 20,
+            "ok": true,
+            "result": {
+              "text": "Synthetic browser benchmark"
+            }
+          },
+          "response_text": "{\"id\": 20, \"ok\": true, \"result\": {\"text\": \"Synthetic browser benchmark\"}}",
+          "response_text_sanitized": "{\"id\": 20, \"ok\": true, \"result\": {\"text\": \"Synthetic browser benchmark\"}}",
+          "status": 200
+        },
+        {
+          "operation": "type",
+          "proxy_ms": 15.021,
+          "request_bytes": 113,
+          "request_json": {
+            "args": {
+              "clear": false,
+              "selector": "#input",
+              "stealth": false,
+              "text": "cli-wire-3"
+            },
+            "cmd": "type",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"type\",\"args\":{\"selector\":\"#input\",\"text\":\"cli-wire-3\",\"clear\":false,\"stealth\":false},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"type\",\"args\":{\"selector\":\"#input\",\"text\":\"cli-wire-3\",\"clear\":false,\"stealth\":false},\"profile\":\"default\"}",
+          "response_bytes": 91,
+          "response_json": {
+            "id": 21,
+            "ok": true,
+            "result": {
+              "stealth": false,
+              "tag": "input",
+              "typed": "cli-wire-3"
+            }
+          },
+          "response_text": "{\"id\": 21, \"ok\": true, \"result\": {\"typed\": \"cli-wire-3\", \"tag\": \"input\", \"stealth\": false}}",
+          "response_text_sanitized": "{\"id\": 21, \"ok\": true, \"result\": {\"typed\": \"cli-wire-3\", \"tag\": \"input\", \"stealth\": false}}",
+          "status": 200
+        },
+        {
+          "operation": "click",
+          "proxy_ms": 9.535,
+          "request_bytes": 65,
+          "request_json": {
+            "args": {
+              "selector": "#action"
+            },
+            "cmd": "click",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"click\",\"args\":{\"selector\":\"#action\"},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"click\",\"args\":{\"selector\":\"#action\"},\"profile\":\"default\"}",
+          "response_bytes": 90,
+          "response_json": {
+            "id": 22,
+            "ok": true,
+            "result": {
+              "clicked": true,
+              "tag": "button",
+              "text": "Run action"
+            }
+          },
+          "response_text": "{\"id\": 22, \"ok\": true, \"result\": {\"clicked\": true, \"tag\": \"button\", \"text\": \"Run action\"}}",
+          "response_text_sanitized": "{\"id\": 22, \"ok\": true, \"result\": {\"clicked\": true, \"tag\": \"button\", \"text\": \"Run action\"}}",
+          "status": 200
+        },
+        {
+          "operation": "wait_delayed_text",
+          "proxy_ms": 155.759,
+          "request_bytes": 94,
+          "request_json": {
+            "args": {
+              "text": "Delayed state ready",
+              "timeout_ms": 5000
+            },
+            "cmd": "waitText",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"waitText\",\"args\":{\"text\":\"Delayed state ready\",\"timeout_ms\":5000},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"waitText\",\"args\":{\"text\":\"Delayed state ready\",\"timeout_ms\":5000},\"profile\":\"default\"}",
+          "response_bytes": 306,
+          "response_json": {
+            "id": 23,
+            "ok": true,
+            "result": {
+              "el": {
+                "classes": [],
+                "href": null,
+                "id": "delayed",
+                "name": null,
+                "placeholder": null,
+                "rect": {
+                  "h": 18,
+                  "w": 1264,
+                  "x": 8,
+                  "y": 185
+                },
+                "tag": "p",
+                "text": "Delayed state ready",
+                "type": null,
+                "value": null,
+                "visible": true
+              },
+              "found": true,
+              "text": "Delayed state ready"
+            }
+          },
+          "response_text": "{\"id\": 23, \"ok\": true, \"result\": {\"found\": true, \"text\": \"Delayed state ready\", \"el\": {\"tag\": \"p\", \"id\": \"delayed\", \"classes\": [], \"name\": null, \"type\": null, \"text\": \"Delayed state ready\", \"value\": null, \"placeholder\": null, \"href\": null, \"rect\": {\"x\": 8, \"y\": 185, \"w\": 1264, \"h\": 18}, \"visible\": true}}}",
+          "response_text_sanitized": "{\"id\": 23, \"ok\": true, \"result\": {\"found\": true, \"text\": \"Delayed state ready\", \"el\": {\"tag\": \"p\", \"id\": \"delayed\", \"classes\": [], \"name\": null, \"type\": null, \"text\": \"Delayed state ready\", \"value\": null, \"placeholder\": null, \"href\": null, \"rect\": {\"x\": 8, \"y\": 185, \"w\": 1264, \"h\": 18}, \"visible\": true}}}",
+          "status": 200
+        },
+        {
+          "operation": "read_result",
+          "proxy_ms": 4.878,
+          "request_bytes": 78,
+          "request_json": {
+            "args": {
+              "selector": "#result",
+              "what": "text"
+            },
+            "cmd": "read",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"read\",\"args\":{\"selector\":\"#result\",\"what\":\"text\"},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"read\",\"args\":{\"selector\":\"#result\",\"what\":\"text\"},\"profile\":\"default\"}",
+          "response_bytes": 61,
+          "response_json": {
+            "id": 24,
+            "ok": true,
+            "result": {
+              "text": "Action complete"
+            }
+          },
+          "response_text": "{\"id\": 24, \"ok\": true, \"result\": {\"text\": \"Action complete\"}}",
+          "response_text_sanitized": "{\"id\": 24, \"ok\": true, \"result\": {\"text\": \"Action complete\"}}",
+          "status": 200
+        }
+      ],
+      "total_tokens": 409
+    },
+    {
+      "request_tokens": 143,
+      "response_tokens": 266,
+      "run": 4,
+      "status": "pass",
+      "steps": [
+        {
+          "operation": "navigate",
+          "proxy_ms": 7.334,
+          "request_bytes": 75,
+          "request_json": {
+            "args": {
+              "url": "http://127.0.0.1:42031/"
+            },
+            "cmd": "goto",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"goto\",\"args\":{\"url\":\"http://127.0.0.1:42031/\"},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"goto\",\"args\":{\"url\":\"http://127.0.0.1:<fixture-port>/\"},\"profile\":\"default\"}",
+          "response_bytes": 89,
+          "response_json": {
+            "id": 25,
+            "ok": true,
+            "result": {
+              "tabId": 1725743480,
+              "url": "http://127.0.0.1:42031/"
+            }
+          },
+          "response_text": "{\"id\": 25, \"ok\": true, \"result\": {\"tabId\": 1725743480, \"url\": \"http://127.0.0.1:42031/\"}}",
+          "response_text_sanitized": "{\"id\": 25, \"ok\": true, \"result\": {\"tabId\": <tab-id>, \"url\": \"http://127.0.0.1:<fixture-port>/\"}}",
+          "status": 200
+        },
+        {
+          "operation": "read_h1",
+          "proxy_ms": 6.896,
+          "request_bytes": 73,
+          "request_json": {
+            "args": {
+              "selector": "h1",
+              "what": "text"
+            },
+            "cmd": "read",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"read\",\"args\":{\"selector\":\"h1\",\"what\":\"text\"},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"read\",\"args\":{\"selector\":\"h1\",\"what\":\"text\"},\"profile\":\"default\"}",
+          "response_bytes": 73,
+          "response_json": {
+            "id": 27,
+            "ok": true,
+            "result": {
+              "text": "Synthetic browser benchmark"
+            }
+          },
+          "response_text": "{\"id\": 27, \"ok\": true, \"result\": {\"text\": \"Synthetic browser benchmark\"}}",
+          "response_text_sanitized": "{\"id\": 27, \"ok\": true, \"result\": {\"text\": \"Synthetic browser benchmark\"}}",
+          "status": 200
+        },
+        {
+          "operation": "type",
+          "proxy_ms": 5.949,
+          "request_bytes": 113,
+          "request_json": {
+            "args": {
+              "clear": false,
+              "selector": "#input",
+              "stealth": false,
+              "text": "cli-wire-4"
+            },
+            "cmd": "type",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"type\",\"args\":{\"selector\":\"#input\",\"text\":\"cli-wire-4\",\"clear\":false,\"stealth\":false},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"type\",\"args\":{\"selector\":\"#input\",\"text\":\"cli-wire-4\",\"clear\":false,\"stealth\":false},\"profile\":\"default\"}",
+          "response_bytes": 91,
+          "response_json": {
+            "id": 28,
+            "ok": true,
+            "result": {
+              "stealth": false,
+              "tag": "input",
+              "typed": "cli-wire-4"
+            }
+          },
+          "response_text": "{\"id\": 28, \"ok\": true, \"result\": {\"typed\": \"cli-wire-4\", \"tag\": \"input\", \"stealth\": false}}",
+          "response_text_sanitized": "{\"id\": 28, \"ok\": true, \"result\": {\"typed\": \"cli-wire-4\", \"tag\": \"input\", \"stealth\": false}}",
+          "status": 200
+        },
+        {
+          "operation": "click",
+          "proxy_ms": 6.186,
+          "request_bytes": 65,
+          "request_json": {
+            "args": {
+              "selector": "#action"
+            },
+            "cmd": "click",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"click\",\"args\":{\"selector\":\"#action\"},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"click\",\"args\":{\"selector\":\"#action\"},\"profile\":\"default\"}",
+          "response_bytes": 90,
+          "response_json": {
+            "id": 29,
+            "ok": true,
+            "result": {
+              "clicked": true,
+              "tag": "button",
+              "text": "Run action"
+            }
+          },
+          "response_text": "{\"id\": 29, \"ok\": true, \"result\": {\"clicked\": true, \"tag\": \"button\", \"text\": \"Run action\"}}",
+          "response_text_sanitized": "{\"id\": 29, \"ok\": true, \"result\": {\"clicked\": true, \"tag\": \"button\", \"text\": \"Run action\"}}",
+          "status": 200
+        },
+        {
+          "operation": "wait_delayed_text",
+          "proxy_ms": 154.687,
+          "request_bytes": 94,
+          "request_json": {
+            "args": {
+              "text": "Delayed state ready",
+              "timeout_ms": 5000
+            },
+            "cmd": "waitText",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"waitText\",\"args\":{\"text\":\"Delayed state ready\",\"timeout_ms\":5000},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"waitText\",\"args\":{\"text\":\"Delayed state ready\",\"timeout_ms\":5000},\"profile\":\"default\"}",
+          "response_bytes": 306,
+          "response_json": {
+            "id": 30,
+            "ok": true,
+            "result": {
+              "el": {
+                "classes": [],
+                "href": null,
+                "id": "delayed",
+                "name": null,
+                "placeholder": null,
+                "rect": {
+                  "h": 18,
+                  "w": 1264,
+                  "x": 8,
+                  "y": 185
+                },
+                "tag": "p",
+                "text": "Delayed state ready",
+                "type": null,
+                "value": null,
+                "visible": true
+              },
+              "found": true,
+              "text": "Delayed state ready"
+            }
+          },
+          "response_text": "{\"id\": 30, \"ok\": true, \"result\": {\"found\": true, \"text\": \"Delayed state ready\", \"el\": {\"tag\": \"p\", \"id\": \"delayed\", \"classes\": [], \"name\": null, \"type\": null, \"text\": \"Delayed state ready\", \"value\": null, \"placeholder\": null, \"href\": null, \"rect\": {\"x\": 8, \"y\": 185, \"w\": 1264, \"h\": 18}, \"visible\": true}}}",
+          "response_text_sanitized": "{\"id\": 30, \"ok\": true, \"result\": {\"found\": true, \"text\": \"Delayed state ready\", \"el\": {\"tag\": \"p\", \"id\": \"delayed\", \"classes\": [], \"name\": null, \"type\": null, \"text\": \"Delayed state ready\", \"value\": null, \"placeholder\": null, \"href\": null, \"rect\": {\"x\": 8, \"y\": 185, \"w\": 1264, \"h\": 18}, \"visible\": true}}}",
+          "status": 200
+        },
+        {
+          "operation": "read_result",
+          "proxy_ms": 5.299,
+          "request_bytes": 78,
+          "request_json": {
+            "args": {
+              "selector": "#result",
+              "what": "text"
+            },
+            "cmd": "read",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"read\",\"args\":{\"selector\":\"#result\",\"what\":\"text\"},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"read\",\"args\":{\"selector\":\"#result\",\"what\":\"text\"},\"profile\":\"default\"}",
+          "response_bytes": 61,
+          "response_json": {
+            "id": 31,
+            "ok": true,
+            "result": {
+              "text": "Action complete"
+            }
+          },
+          "response_text": "{\"id\": 31, \"ok\": true, \"result\": {\"text\": \"Action complete\"}}",
+          "response_text_sanitized": "{\"id\": 31, \"ok\": true, \"result\": {\"text\": \"Action complete\"}}",
+          "status": 200
+        }
+      ],
+      "total_tokens": 409
+    },
+    {
+      "request_tokens": 143,
+      "response_tokens": 266,
+      "run": 5,
+      "status": "pass",
+      "steps": [
+        {
+          "operation": "navigate",
+          "proxy_ms": 6.626,
+          "request_bytes": 75,
+          "request_json": {
+            "args": {
+              "url": "http://127.0.0.1:42031/"
+            },
+            "cmd": "goto",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"goto\",\"args\":{\"url\":\"http://127.0.0.1:42031/\"},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"goto\",\"args\":{\"url\":\"http://127.0.0.1:<fixture-port>/\"},\"profile\":\"default\"}",
+          "response_bytes": 89,
+          "response_json": {
+            "id": 32,
+            "ok": true,
+            "result": {
+              "tabId": 1725743480,
+              "url": "http://127.0.0.1:42031/"
+            }
+          },
+          "response_text": "{\"id\": 32, \"ok\": true, \"result\": {\"tabId\": 1725743480, \"url\": \"http://127.0.0.1:42031/\"}}",
+          "response_text_sanitized": "{\"id\": 32, \"ok\": true, \"result\": {\"tabId\": <tab-id>, \"url\": \"http://127.0.0.1:<fixture-port>/\"}}",
+          "status": 200
+        },
+        {
+          "operation": "read_h1",
+          "proxy_ms": 11.735,
+          "request_bytes": 73,
+          "request_json": {
+            "args": {
+              "selector": "h1",
+              "what": "text"
+            },
+            "cmd": "read",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"read\",\"args\":{\"selector\":\"h1\",\"what\":\"text\"},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"read\",\"args\":{\"selector\":\"h1\",\"what\":\"text\"},\"profile\":\"default\"}",
+          "response_bytes": 73,
+          "response_json": {
+            "id": 34,
+            "ok": true,
+            "result": {
+              "text": "Synthetic browser benchmark"
+            }
+          },
+          "response_text": "{\"id\": 34, \"ok\": true, \"result\": {\"text\": \"Synthetic browser benchmark\"}}",
+          "response_text_sanitized": "{\"id\": 34, \"ok\": true, \"result\": {\"text\": \"Synthetic browser benchmark\"}}",
+          "status": 200
+        },
+        {
+          "operation": "type",
+          "proxy_ms": 5.801,
+          "request_bytes": 113,
+          "request_json": {
+            "args": {
+              "clear": false,
+              "selector": "#input",
+              "stealth": false,
+              "text": "cli-wire-5"
+            },
+            "cmd": "type",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"type\",\"args\":{\"selector\":\"#input\",\"text\":\"cli-wire-5\",\"clear\":false,\"stealth\":false},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"type\",\"args\":{\"selector\":\"#input\",\"text\":\"cli-wire-5\",\"clear\":false,\"stealth\":false},\"profile\":\"default\"}",
+          "response_bytes": 91,
+          "response_json": {
+            "id": 35,
+            "ok": true,
+            "result": {
+              "stealth": false,
+              "tag": "input",
+              "typed": "cli-wire-5"
+            }
+          },
+          "response_text": "{\"id\": 35, \"ok\": true, \"result\": {\"typed\": \"cli-wire-5\", \"tag\": \"input\", \"stealth\": false}}",
+          "response_text_sanitized": "{\"id\": 35, \"ok\": true, \"result\": {\"typed\": \"cli-wire-5\", \"tag\": \"input\", \"stealth\": false}}",
+          "status": 200
+        },
+        {
+          "operation": "click",
+          "proxy_ms": 5.66,
+          "request_bytes": 65,
+          "request_json": {
+            "args": {
+              "selector": "#action"
+            },
+            "cmd": "click",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"click\",\"args\":{\"selector\":\"#action\"},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"click\",\"args\":{\"selector\":\"#action\"},\"profile\":\"default\"}",
+          "response_bytes": 90,
+          "response_json": {
+            "id": 36,
+            "ok": true,
+            "result": {
+              "clicked": true,
+              "tag": "button",
+              "text": "Run action"
+            }
+          },
+          "response_text": "{\"id\": 36, \"ok\": true, \"result\": {\"clicked\": true, \"tag\": \"button\", \"text\": \"Run action\"}}",
+          "response_text_sanitized": "{\"id\": 36, \"ok\": true, \"result\": {\"clicked\": true, \"tag\": \"button\", \"text\": \"Run action\"}}",
+          "status": 200
+        },
+        {
+          "operation": "wait_delayed_text",
+          "proxy_ms": 156.349,
+          "request_bytes": 94,
+          "request_json": {
+            "args": {
+              "text": "Delayed state ready",
+              "timeout_ms": 5000
+            },
+            "cmd": "waitText",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"waitText\",\"args\":{\"text\":\"Delayed state ready\",\"timeout_ms\":5000},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"waitText\",\"args\":{\"text\":\"Delayed state ready\",\"timeout_ms\":5000},\"profile\":\"default\"}",
+          "response_bytes": 306,
+          "response_json": {
+            "id": 37,
+            "ok": true,
+            "result": {
+              "el": {
+                "classes": [],
+                "href": null,
+                "id": "delayed",
+                "name": null,
+                "placeholder": null,
+                "rect": {
+                  "h": 18,
+                  "w": 1264,
+                  "x": 8,
+                  "y": 185
+                },
+                "tag": "p",
+                "text": "Delayed state ready",
+                "type": null,
+                "value": null,
+                "visible": true
+              },
+              "found": true,
+              "text": "Delayed state ready"
+            }
+          },
+          "response_text": "{\"id\": 37, \"ok\": true, \"result\": {\"found\": true, \"text\": \"Delayed state ready\", \"el\": {\"tag\": \"p\", \"id\": \"delayed\", \"classes\": [], \"name\": null, \"type\": null, \"text\": \"Delayed state ready\", \"value\": null, \"placeholder\": null, \"href\": null, \"rect\": {\"x\": 8, \"y\": 185, \"w\": 1264, \"h\": 18}, \"visible\": true}}}",
+          "response_text_sanitized": "{\"id\": 37, \"ok\": true, \"result\": {\"found\": true, \"text\": \"Delayed state ready\", \"el\": {\"tag\": \"p\", \"id\": \"delayed\", \"classes\": [], \"name\": null, \"type\": null, \"text\": \"Delayed state ready\", \"value\": null, \"placeholder\": null, \"href\": null, \"rect\": {\"x\": 8, \"y\": 185, \"w\": 1264, \"h\": 18}, \"visible\": true}}}",
+          "status": 200
+        },
+        {
+          "operation": "read_result",
+          "proxy_ms": 5.09,
+          "request_bytes": 78,
+          "request_json": {
+            "args": {
+              "selector": "#result",
+              "what": "text"
+            },
+            "cmd": "read",
+            "profile": "default"
+          },
+          "request_text": "{\"cmd\":\"read\",\"args\":{\"selector\":\"#result\",\"what\":\"text\"},\"profile\":\"default\"}",
+          "request_text_sanitized": "{\"cmd\":\"read\",\"args\":{\"selector\":\"#result\",\"what\":\"text\"},\"profile\":\"default\"}",
+          "response_bytes": 61,
+          "response_json": {
+            "id": 38,
+            "ok": true,
+            "result": {
+              "text": "Action complete"
+            }
+          },
+          "response_text": "{\"id\": 38, \"ok\": true, \"result\": {\"text\": \"Action complete\"}}",
+          "response_text_sanitized": "{\"id\": 38, \"ok\": true, \"result\": {\"text\": \"Action complete\"}}",
+          "status": 200
+        }
+      ],
+      "total_tokens": 409
+    }
+  ],
+  "schema": "sleeper-cli-http-json-bodies/v1",
+  "status": "pass"
+}

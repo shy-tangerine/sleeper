@@ -1,0 +1,81 @@
+name: Release browser package
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing v* tag whose commit is already on main"
+        required: true
+        type: string
+
+concurrency:
+  group: sleeper-release
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    if: github.actor == github.repository_owner
+    permissions:
+      contents: write
+    runs-on: [self-hosted, Linux, X64, sleeper-ci]
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ inputs.tag }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          enable-cache: true
+          python-version: "3.12"
+      - name: Install validation dependencies
+        run: uv sync --frozen
+      - name: Verify the launch gate and a sanitized public export
+        run: |
+          uv run --no-project --python 3.12 python scripts/check_launch_gate.py --verify
+          uv run --no-project --python 3.12 python scripts/check_launch_gate.py --export "$RUNNER_TEMP/public-export"
+          uv run --no-project --python 3.12 python scripts/check_launch_gate.py --check "$RUNNER_TEMP/public-export"
+      - name: Verify release version and source tree
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          case "$RELEASE_TAG" in v*) ;; *) echo "release tag must start with v" >&2; exit 1;; esac
+          git fetch --no-tags origin main
+          test "$(git rev-parse "$RELEASE_TAG^{commit}")" = "$GITHUB_SHA"
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main
+          test "$(jq -r .version extension/manifest.json)" = "$(jq -r .version extension/manifest.chromium.json)"
+          test "$(jq -r .version extension/manifest.json)" = "${RELEASE_TAG#v}"
+          uv run python scripts/check_public_tree.py
+          uv run bash test/run.sh
+          uv run pytest -q test
+      - name: Build Firefox package
+        run: ./scripts/build-xpi.sh
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "20"
+      - name: Install pinned Firefox signing tool
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Sign Firefox package with AMO
+        env:
+          AMO_JWT_ISSUER: ${{ secrets.AMO_JWT_ISSUER }}
+          AMO_JWT_SECRET: ${{ secrets.AMO_JWT_SECRET }}
+        run: ./scripts/sign-firefox.sh
+      - name: Build Chromium package
+        run: ./scripts/build-chromium.sh
+      - name: Build source archive
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: uv run --no-project --python 3.12 python scripts/build_source_archive.py "$RUNNER_TEMP/public-export" "$RELEASE_TAG" sleeper-source.zip
+      - name: Publish release asset
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
+        with:
+          tag_name: ${{ inputs.tag }}
+          generate_release_notes: true
+          files: |
+            build/sleeper-firefox.xpi
+            build/sleeper-chromium.zip
+            sleeper-source.zip

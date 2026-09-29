@@ -1,0 +1,11 @@
+{
+  "name": "sleeper",
+  "description": "Inspect and control an existing local browser session through Sleeper MCP tools.",
+  "version": "2.0.1",
+  "author": {
+    "name": "Shy Tangerine"
+  },
+  "repository": "https://github.com/shy-tangerine/Sleeper",
+  "homepage": "https://github.com/shy-tangerine/Sleeper",
+  "license": "MIT"
+}

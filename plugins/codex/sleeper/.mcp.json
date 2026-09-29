@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "sleeper": {
+      "command": "sleeper-mcp"
+    }
+  }
+}

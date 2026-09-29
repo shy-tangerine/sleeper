@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Sleeper managed service -->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>Label</key><string>com.shy-tangerine.sleeper</string>
+  <key>ProgramArguments</key><array>
+    <string>__SLEEPER_PYTHON__</string><string>__SLEEPER_DAEMON__</string>
+  </array>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+  <key>EnvironmentVariables</key><dict>
+    <key>SLEEPER_PORT</key><string>8790</string>
+  </dict>
+</dict></plist>

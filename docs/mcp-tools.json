@@ -1,0 +1,1216 @@
+[
+  {
+    "name": "sleeper_batch",
+    "description": "Run ordered browser actions in one request; stops at the first failure by default",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "actions": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 50,
+          "items": {
+            "type": "object",
+            "properties": {
+              "cmd": {
+                "type": "string"
+              },
+              "args": {
+                "type": "object"
+              },
+              "tab": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "cmd"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "stop_on_error": {
+          "type": "boolean",
+          "default": true
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "actions"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_state",
+    "description": "Get page state for the selected Sleeper profile (url, title, focus, visibility)",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_sessions",
+    "description": "List connected stable browser installation IDs for routing",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_tabs",
+    "description": "List tabs in the selected Sleeper browser profile",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_snapshot",
+    "description": "Headings/inputs/buttons/links summary",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "tab": {
+          "type": "string",
+          "description": "tab index or URL substring"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_goto",
+    "description": "Navigate to URL",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_back",
+    "description": "History back",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_frames",
+    "description": "List cross-origin iframes",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_get",
+    "description": "Get page/element properties",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "selector": {
+          "type": "string"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_find",
+    "description": "Inspect elements by CSS selector",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "selector": {
+          "type": "string"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "selector"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_find_text",
+    "description": "Find element by innerText",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "exact": {
+          "type": "boolean"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_click",
+    "description": "Click element by CSS selector (supports :has-text)",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "selector": {
+          "type": "string"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "selector"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_click_all",
+    "description": "Click every matching element",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "selector": {
+          "type": "string"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "selector"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_click_text",
+    "description": "Click element by text",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "index": {
+          "type": "integer"
+        },
+        "exact": {
+          "type": "boolean"
+        },
+        "verify": {
+          "type": "string"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_hover",
+    "description": "Mouseover element",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "selector": {
+          "type": "string"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "selector"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_focus",
+    "description": "Focus element",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "selector": {
+          "type": "string"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "selector"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_type",
+    "description": "Type into input (React-compatible events)",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "selector": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "clear": {
+          "type": "boolean"
+        },
+        "stealth": {
+          "type": "boolean"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "selector",
+        "text"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_keys",
+    "description": "Dispatch key events on active element",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "keys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "keys"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_press",
+    "description": "Keyboard events on element/active",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "selector": {
+          "type": "string"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_submit",
+    "description": "Submit form",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "selector": {
+          "type": "string"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_read",
+    "description": "Read single element (text/html/value/attr)",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "selector": {
+          "type": "string"
+        },
+        "what": {
+          "type": "string",
+          "enum": [
+            "text",
+            "html",
+            "value",
+            "attr"
+          ]
+        },
+        "attr": {
+          "type": "string"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "selector"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_read_all",
+    "description": "Read all matching elements",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "selector": {
+          "type": "string"
+        },
+        "what": {
+          "type": "string"
+        },
+        "attr": {
+          "type": "string"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "selector"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_wait",
+    "description": "Wait for selector",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "selector": {
+          "type": "string"
+        },
+        "timeout": {
+          "type": "integer"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "selector"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_wait_text",
+    "description": "Wait for text",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "exact": {
+          "type": "boolean"
+        },
+        "timeout_ms": {
+          "type": "integer"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_wait_until",
+    "description": "Wait for a structured page condition; JavaScript predicates are Chromium-only",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "condition": {
+          "type": "object",
+          "description": "Structured condition with selector or text, plus optional state, count, attribute, value, operator, and exact fields"
+        },
+        "predicate": {
+          "type": "string",
+          "description": "Chromium-only JavaScript predicate"
+        },
+        "timeout": {
+          "type": "integer"
+        },
+        "interval": {
+          "type": "integer"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_wait_url",
+    "description": "Wait until URL contains pattern",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "pattern": {
+          "type": "string"
+        },
+        "timeout_ms": {
+          "type": "integer"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "pattern"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_exec",
+    "description": "Execute arbitrary JS in Chromium; unavailable in signed Firefox builds",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_forms",
+    "description": "Enumerate form inputs",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "selector": {
+          "type": "string"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_fill_form",
+    "description": "Fill form by name/id/placeholder (JSON map)",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "fields": {
+          "type": "object"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "fields"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_select",
+    "description": "Set select value + change event",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "selector": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "selector",
+        "value"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_extract",
+    "description": "Extract selector->text map",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "map": {
+          "type": "object"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "map"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_scroll",
+    "description": "Scroll by pixels or to selector",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "y": {
+          "type": "integer"
+        },
+        "selector": {
+          "type": "string"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_scroll_until",
+    "description": "Scroll until text/selector appears",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "container": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "selector": {
+          "type": "string"
+        },
+        "max_iters": {
+          "type": "integer"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_wait_dialog",
+    "description": "Wait for dialog",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "timeout_ms": {
+          "type": "integer"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_network",
+    "description": "Per-tab request log or fetch",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "media": {
+          "type": "boolean"
+        },
+        "since": {
+          "type": "integer"
+        },
+        "clear": {
+          "type": "boolean"
+        },
+        "fetch": {
+          "type": "boolean"
+        },
+        "url": {
+          "type": "string"
+        },
+        "body": {
+          "type": "boolean"
+        },
+        "segment": {
+          "type": "string"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_media",
+    "description": "Per-tab media request log",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "since": {
+          "type": "integer"
+        },
+        "clear": {
+          "type": "boolean"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_wait_xhr",
+    "description": "Wait for XHR matching URL substring",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "url_substring": {
+          "type": "string"
+        },
+        "method": {
+          "type": "string"
+        },
+        "timeout_ms": {
+          "type": "integer"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "url_substring"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_wait_download",
+    "description": "Wait for a download matching a URL/filename pattern to finish",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "pattern": {
+          "type": "string"
+        },
+        "timeout_ms": {
+          "type": "integer"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "pattern"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_console",
+    "description": "Page console capture",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_shot",
+    "description": "Viewport PNG screenshot (data URL)",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_screenshot",
+    "description": "Alias for shot — viewport PNG screenshot",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_upload",
+    "description": "Upload explicit base64 file contents to an input; native paths are unsupported. Total JSON request limit: 1 MiB.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "selector": {
+          "type": "string"
+        },
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "content_base64"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "content_base64": {
+                "type": "string"
+              },
+              "mime_type": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "selector",
+        "files"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_drag",
+    "description": "Drag source to target",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "source",
+        "target"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_dblclick",
+    "description": "Double-click element",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "selector": {
+          "type": "string"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "selector"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_check",
+    "description": "Check checkbox",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "selector": {
+          "type": "string"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "selector"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_uncheck",
+    "description": "Uncheck checkbox",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "selector": {
+          "type": "string"
+        },
+        "tab": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "selector"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_newtab",
+    "description": "Open new tab via extension API",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_api",
+    "description": "Call page backend API with captured auth token (background fetch)",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "method": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "sleeper_dialog",
+    "description": "Install auto accept/dismiss dialog hook",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profile": {
+          "type": "string",
+          "description": "Browser ID from sleeper_sessions; optional with one connected browser."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  }
+]

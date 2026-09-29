@@ -1,0 +1,1117 @@
+#!/usr/bin/env bash
+# sleeper — CLI for the browser-sleeper daemon.
+# Usage: sleeper <cmd> [args...]  →  POST /command to the daemon
+#   sleeper sessions | state | tabs
+#   sleeper find 'input[placeholder*="Buscar"]'
+#   Most DOM/content commands accept a trailing [--tab IDX|URL-SUBSTR] to target
+#   a hidden tab (the background auto-activates it before routing the command).
+#   sleeper click 'button[type=submit]'
+#   sleeper click_all 'a.buy'
+#   sleeper type 'input[name=q]' 'macbook pro' [--clear] [--stealth]
+#   sleeper read 'h1' [--html|--value|--attr href]
+#   sleeper read_all '.item' [--html|--value|--attr href]
+#   sleeper press Enter [--selector 'input']
+#   sleeper keys Enter Tab ArrowDown
+#   sleeper submit [--selector form]
+#   sleeper wait 'div.result' [--timeout 15000]
+#   sleeper wait_until 'document.querySelectorAll(".x").length > 0'
+#   sleeper exec 'return document.title'
+#   sleeper forms [--selector form]
+#   sleeper fill_form '{"q":"macbook pro"}'   (fields keyed by name/id/placeholder)
+#   sleeper select 'select#sort' 'relevance'
+#   sleeper extract '{"title":"h1","prices":".price"}'
+#   sleeper snapshot
+#   sleeper scroll 400 | scroll --selector 'footer'
+#   sleeper tabs
+#   sleeper goto 'https://…' [--tab IDX|URL-SUBSTR]
+#   sleeper wait_url 'sso/register' [--timeout 15000] [--tab IDX|URL-SUBSTR]
+#   sleeper network [--media] [--since=60] [--clear] [--tab IDX|URL-SUBSTR]
+#   sleeper api '/backend-api/...' [--method GET|POST|DELETE] [--body '{"k":v}']
+#   sleeper scroll_until [--container C] [--text X] [--selector S] [--max 40]
+#   sleeper wait_dialog [--text X] [--timeout 15000]
+#   sleeper console [--lines N]
+#   sleeper shot [--tab …] | screenshot …   (viewport PNG)
+#   sleeper back | frames | get [--selector SEL]
+#   sleeper upload '<selector>' --files 'a.txt,b.txt'
+#   sleeper drag '<source>' '<target>'
+#   sleeper dblclick '<selector>'
+#   sleeper check '<selector>' | uncheck '<selector>'
+#   sleeper wait_xhr '<url_substring>' [--method GET|POST|DELETE] [--timeout 15000]
+#   sleeper recipe '<name>' [--json]   (execute a JSON recipe from recipes/<name>.json)
+#   sleeper schema '<name>' [--tab IDX|URL-SUBSTR] [--url URL] [--json]
+#       (extract via a reusable schema from schemas/<name>.json; optional --url
+#        or schema.url is gotos'd first, results shaped by the schema fields)
+#   sleeper dialog
+set -euo pipefail
+
+PORT="${SLEEPER_PORT:-8790}"
+BASE="http://127.0.0.1:${PORT}"
+TOKEN_FILE="${SLEEPER_TOKEN_FILE:-${HOME:-}/.config/browser-sleeper-token}"
+
+usage() { sed -n '2,40p' "$0"; exit 1; }
+
+# jq starts faster than a fresh Python interpreter and preserves JSON escaping
+# for arbitrary user supplied selectors, text, and profile names. Keep the
+# Python fallback so the base CLI retains its existing dependency footprint.
+j() {
+  if command -v jq >/dev/null 2>&1; then
+    printf '%s' "$1" | jq -Rs .
+  else
+    printf '%s' "$1" | python3 -c 'import json,sys;print(json.dumps(sys.stdin.read()))'
+  fi
+}
+jb() { j "$1"; }
+post_payload() {
+  local payload="$1"
+  payload=$(apply_profile "$payload")
+  if [ "${SLEEPER_DRY_RUN:-0}" = "1" ]; then
+    printf '%s\n' "$payload"
+    return 0
+  fi
+  if [ ! -s "$TOKEN_FILE" ]; then
+    if python3 -c 'import sys, urllib.request; urllib.request.urlopen(sys.argv[1] + "/health", timeout=1).close()' "$BASE" >/dev/null 2>&1; then
+      echo "error: Sleeper daemon is running but no local token exists yet; start the daemon's first pairing or check SLEEPER_TOKEN_FILE" >&2
+    else
+      echo "error: Sleeper daemon is not running; on Linux run 'systemctl --user enable --now sleeper.service', or reinstall Sleeper" >&2
+    fi
+    return 1
+  fi
+  if ! printf '%s' "$payload" | SLEEPER_POST_BASE="$BASE" SLEEPER_POST_TOKEN_FILE="$TOKEN_FILE" python3 -c '
+import hashlib, hmac, json, os, secrets, sys, time, urllib.request
+base = os.environ["SLEEPER_POST_BASE"]
+with open(os.environ["SLEEPER_POST_TOKEN_FILE"], encoding="utf-8") as token_file:
+    token = token_file.read().strip()
+if not token:
+    raise SystemExit("Sleeper daemon credentials are unavailable")
+body = sys.stdin.buffer.read()
+identity_nonce = secrets.token_hex(16)
+with urllib.request.urlopen(base + "/health?nonce=" + identity_nonce, timeout=3) as response:
+    health = json.load(response)
+instance = str(health.get("instance_id", ""))
+expected = hmac.new(token.encode(), f"{identity_nonce}:{instance}".encode(), hashlib.sha256).hexdigest()
+if not hmac.compare_digest(str(health.get("identity_proof", "")), expected):
+    raise SystemExit("daemon identity verification failed")
+nonce = secrets.token_hex(16)
+timestamp = int(time.time())
+body_hash = hashlib.sha256(body).hexdigest()
+message = f"{instance}\n{nonce}\n{timestamp}\nPOST\n/command\n{body_hash}".encode()
+headers = {"Content-Type": "application/json", "Accept": "application/json",
+           "X-Sleeper-Instance": instance, "X-Sleeper-Nonce": nonce,
+           "X-Sleeper-Timestamp": str(timestamp),
+           "X-Sleeper-Proof": hmac.new(token.encode(), message, hashlib.sha256).hexdigest(),
+           "X-Sleeper-Preamble": hmac.new(token.encode(),
+             f"{instance}\n{nonce}\n{timestamp}\nPOST\n/command\n{len(body)}".encode(), hashlib.sha256).hexdigest()}
+with urllib.request.urlopen(urllib.request.Request(base + "/command", body, headers), timeout=120) as response:
+    sys.stdout.buffer.write(response.read())
+'; then
+    echo "error: Sleeper daemon is not running; on Linux run 'systemctl --user enable --now sleeper.service', or reinstall Sleeper" >&2
+    return 1
+  fi
+}
+
+post_and_check() {
+  local payload="$1"
+  # "${2:-}" not "$2": several command paths (shot, batch, wait download,
+  # semantic locators) call this with a single argument; under set -u a bare
+  # $2 reference aborts the whole script before any request is sent.
+  local resp="${2:-}"
+  if [ -z "${resp}" ]; then
+    resp=$(post_payload "$payload")
+  fi
+  # python3 -c, not "python3 - <<heredoc": a heredoc and the response share
+  # one stdin, so the interpreter consumed the script and json.loads('')
+  # always failed - every successful command exited 1.
+  if ! printf '%s' "$resp" | python3 -c '
+import json, sys
+text = sys.stdin.read()
+try:
+    obj = json.loads(text)
+except Exception:
+    sys.exit(1)
+if isinstance(obj, dict) and obj.get("ok") is False:
+    sys.exit(1)
+result = obj.get("result") if isinstance(obj, dict) else None
+if isinstance(result, dict) and result.get("ok") is False:
+    sys.exit(1)
+sys.exit(0)
+'
+  then
+    printf '%s\n' "$resp"
+    return 1
+  fi
+  printf '%s\n' "$resp"
+}
+
+# Single transport for early (shot/batch/upload/wait download/semantic) and
+# main command paths alike: dry-run prints the payload; live mode prints the
+# response and exits non-zero only on transport failure. A daemon error
+# payload stays visible on stdout (pinned by test_cli_transport), so
+# post_and_check's ok:false status is intentionally not propagated.
+run_command_transport() {
+  local payload="$1"
+  local resp="" command started progress_pid status elapsed elapsed_ns elapsed_ms
+  if [ "${SLEEPER_DRY_RUN:-0}" = "1" ]; then
+    post_payload "$payload"
+    return 0
+  fi
+  command=$(printf '%s' "$payload" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("cmd", "command"))' 2>/dev/null) || command="command"
+  started=$(python3 -c 'import time; print(time.monotonic_ns())')
+  (
+    elapsed=0
+    while sleep 1; do
+      elapsed=$((elapsed + 1))
+      printf 'sleeper: %s still running (%ss)\n' "$command" "$elapsed" >&2
+    done
+  ) &
+  progress_pid=$!
+  if resp=$(post_payload "$payload"); then
+    status=0
+  else
+    status=$?
+  fi
+  kill "$progress_pid" 2>/dev/null || true
+  wait "$progress_pid" 2>/dev/null || true
+  elapsed_ns=$(python3 -c 'import time; print(time.monotonic_ns())')
+  elapsed_ms=$(((elapsed_ns - started) / 1000000))
+  if [ "$status" -ne 0 ]; then
+    printf 'sleeper: %s failed after %sms\n' "$command" "$elapsed_ms" >&2
+    [ -z "$resp" ] || printf '%s\n' "$resp"
+    return "$status"
+  fi
+  if ! printf '%s' "$resp" | python3 -m json.tool > /dev/null 2>&1; then
+    printf '%s\n' "$resp"
+  else
+    printf '%s\n' "$resp" | python3 -m json.tool
+  fi
+  if ! post_and_check "$payload" "$resp" >/dev/null; then
+    printf 'sleeper: %s failed after %sms\n' "$command" "$elapsed_ms" >&2
+  fi
+}
+
+payload_file() {
+  local path="$1"
+  if [ ! -f "$path" ]; then
+    echo "error: file not found: $path" >&2
+    exit 1
+  fi
+  python3 - "$path" <<'PY'
+import base64
+import json
+import mimetypes
+import pathlib
+import sys
+
+path = pathlib.Path(sys.argv[1])
+data = path.read_bytes()
+out = {"name": path.name, "content_base64": base64.b64encode(data).decode("ascii")}
+mime, _ = mimetypes.guess_type(str(path))
+if mime:
+    out["mime_type"] = mime
+print(json.dumps(out, ensure_ascii=False, separators=(",", ":")))
+PY
+}
+apply_profile() {
+  if [ -n "${SLEEPER_PROFILE:-}" ]; then
+    if command -v jq >/dev/null 2>&1; then
+      jq -c --arg profile "$SLEEPER_PROFILE" '. + {profile: $profile}' <<<"$1"
+    else
+      python3 - "$1" "$SLEEPER_PROFILE" <<'PY'
+import json, sys
+payload = json.loads(sys.argv[1])
+payload["profile"] = sys.argv[2]
+print(json.dumps(payload, ensure_ascii=False, separators=(",", ":")))
+PY
+    fi
+  else
+    printf '%s\n' "$1"
+  fi
+}
+
+# Recipe/schema orchestration lives beside this entrypoint so this command
+# remains a command router. The module is sourced after BASE is initialized.
+export SLEEPER_ROOT="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd)"
+source "${SLEEPER_ROOT}/cli/recipe_cli.sh"
+
+
+# Consume one positional argument for run_semantic_action. For type/select,
+# a second bare word (or any bare word once a semantic locator is present)
+# is the value; otherwise the first bare word is the selector.
+_semantic_consume_positional() {
+  # action pos selector_set value_out_var selector_out_var
+  local action="$1" pos="$2" selector_set="$3" word="$4"
+  if { [ "$action" = "type" ] || [ "$action" = "select" ]; } && { [ "$pos" -gt 0 ] || [ -n "$selector_set" ]; }; then
+    SEMANTIC_VALUE="$word"
+  elif [ -z "$SEMANTIC_SELECTOR" ]; then
+    SEMANTIC_SELECTOR="$word"
+  fi
+}
+
+run_semantic_action() {
+  local action="$1"; shift
+  local selector="" role="" name="" label="" locator_text="" testid="" tab="" value="" clear="false" stealth="false" pos=0
+  SEMANTIC_SELECTOR=""; SEMANTIC_VALUE=""
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --role) role="${2:?role}"; shift 2;;
+      --name) name="${2:?name}"; shift 2;;
+      --label) label="${2:?label}"; shift 2;;
+      --text) locator_text="${2:?text}"; shift 2;;
+      --testid) testid="${2:?testid}"; shift 2;;
+      --tab) tab="${2:?tab}"; shift 2;;
+      --clear) clear="true"; shift;;
+      --stealth) stealth="true"; shift;;
+      -*) shift;;
+      *) _semantic_consume_positional "$action" "$pos" "$role$name$label$locator_text$testid" "$1";
+        selector="$SEMANTIC_SELECTOR"; value="$SEMANTIC_VALUE";
+        pos=$((pos + 1)); shift;;
+    esac
+  done
+  [ -n "$selector" ] || [ -n "$role" ] || [ -n "$name" ] || [ -n "$label" ] || [ -n "$locator_text" ] || [ -n "$testid" ] || { echo "error: $action: selector or semantic locator required" >&2; exit 1; }
+  local args="{\"selector\":$(j "$selector")"
+  [ -n "$role" ] && args="$args,\"role\":$(j "$role")"
+  [ -n "$name" ] && args="$args,\"name\":$(j "$name")"
+  [ -n "$label" ] && args="$args,\"label\":$(j "$label")"
+  [ -n "$locator_text" ] && args="$args,\"locator_text\":$(j "$locator_text")"
+  [ -n "$testid" ] && args="$args,\"testid\":$(j "$testid")"
+  [ -n "$tab" ] && args="$args,\"tab\":$(j "$tab")"
+  local wire_cmd="$action"
+  [ "$action" = "select" ] && wire_cmd="selectOption"
+  if [ "$action" = "type" ]; then
+    [ -n "$value" ] || { echo "error: type: text required" >&2; exit 1; }
+    args="$args,\"text\":$(j "$value"),\"clear\":$clear,\"stealth\":$stealth"
+  fi
+  if [ "$action" = "select" ]; then
+    [ -n "$value" ] || { echo "error: select: value required" >&2; exit 1; }
+    args="$args,\"value\":$(j "$value")"
+  fi
+  args="$args}"
+  local payload="{\"cmd\":\"$wire_cmd\",\"args\":$args}"
+  run_command_transport "$payload"
+}
+
+run_semantic_drag() {
+  local source="" target="" tab="" sr="" sn="" sl="" st="" sid="" tr="" tn="" tl="" tt="" tid=""
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --source-role) sr="${2:?source-role}"; shift 2;; --source-name) sn="${2:?source-name}"; shift 2;;
+      --source-label) sl="${2:?source-label}"; shift 2;; --source-text) st="${2:?source-text}"; shift 2;;
+      --source-testid) sid="${2:?source-testid}"; shift 2;; --target-role) tr="${2:?target-role}"; shift 2;;
+      --target-name) tn="${2:?target-name}"; shift 2;; --target-label) tl="${2:?target-label}"; shift 2;;
+      --target-text) tt="${2:?target-text}"; shift 2;; --target-testid) tid="${2:?target-testid}"; shift 2;;
+      --tab) tab="${2:?tab}"; shift 2;; -*) shift;;
+      *) [ -n "$source" ] && target="$1" || source="$1"; shift;;
+    esac
+  done
+  [ -n "$source$sr$sn$sl$st$sid" ] || { echo "error: drag: source locator required" >&2; exit 1; }
+  [ -n "$target$tr$tn$tl$tt$tid" ] || { echo "error: drag: target locator required" >&2; exit 1; }
+  local args="{\"source\":$(j "$source"),\"target\":$(j "$target")"
+  [ -n "$sr" ] && args="$args,\"source_role\":$(j "$sr")"; [ -n "$sn" ] && args="$args,\"source_name\":$(j "$sn")"
+  [ -n "$sl" ] && args="$args,\"source_label\":$(j "$sl")"; [ -n "$st" ] && args="$args,\"source_text\":$(j "$st")"; [ -n "$sid" ] && args="$args,\"source_testid\":$(j "$sid")"
+  [ -n "$tr" ] && args="$args,\"target_role\":$(j "$tr")"; [ -n "$tn" ] && args="$args,\"target_name\":$(j "$tn")"
+  [ -n "$tl" ] && args="$args,\"target_label\":$(j "$tl")"; [ -n "$tt" ] && args="$args,\"target_text\":$(j "$tt")"; [ -n "$tid" ] && args="$args,\"target_testid\":$(j "$tid")"; [ -n "$tab" ] && args="$args,\"tab\":$(j "$tab")"
+  args="$args}"
+  local payload="{\"cmd\":\"drag\",\"args\":$args}"
+  run_command_transport "$payload"
+}
+
+run_semantic_fill() {
+  local fields="" selector="" role="" name="" label="" locator_text="" testid="" tab=""
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --role) role="${2:?role}"; shift 2;; --name) name="${2:?name}"; shift 2;; --label) label="${2:?label}"; shift 2;;
+      --text) locator_text="${2:?text}"; shift 2;; --testid) testid="${2:?testid}"; shift 2;; --tab) tab="${2:?tab}"; shift 2;;
+      -*) shift;; *) [ -z "$fields" ] && fields="$1" || selector="$1"; shift;;
+    esac
+  done
+  [ -n "$fields" ] || { echo "error: fill_form: JSON fields required" >&2; exit 1; }
+  local args="{\"fields\":$fields"
+  [ -n "$selector" ] && args="$args,\"selector\":$(j "$selector")"; [ -n "$role" ] && args="$args,\"role\":$(j "$role")"; [ -n "$name" ] && args="$args,\"name\":$(j "$name")"; [ -n "$label" ] && args="$args,\"label\":$(j "$label")"; [ -n "$locator_text" ] && args="$args,\"locator_text\":$(j "$locator_text")"; [ -n "$testid" ] && args="$args,\"testid\":$(j "$testid")"; [ -n "$tab" ] && args="$args,\"tab\":$(j "$tab")"
+  args="$args}"
+  local payload="{\"cmd\":\"fillForm\",\"args\":$args}"
+  run_command_transport "$payload"
+}
+
+cmd="${1:-}"; shift || true
+
+if [ "$cmd" = "--version" ] || [ "$cmd" = "version" ]; then
+  echo "Sleeper 2.0.1"
+  exit 0
+fi
+
+if [ "$cmd" = "mobile" ]; then
+  mobile_python="${SLEEPER_ROOT}/venv/bin/python"
+  [ -x "$mobile_python" ] || mobile_python="${SLEEPER_ROOT}/.venv/bin/python"
+  [ -x "$mobile_python" ] || mobile_python="$(command -v python3)"
+exec "$mobile_python" "${SLEEPER_ROOT}/cli/tailscale_mobile.py" "$@"
+fi
+
+if [ "$cmd" = "batch" ]; then
+  actions="${1:-}"
+  [ -n "$actions" ] || { echo "error: batch: JSON action array required" >&2; exit 1; }
+  shift || true
+stop_on_error=""
+[ "${1:-}" = "--continue-on-error" ] && stop_on_error=",\"stop_on_error\":false"
+payload="{\"cmd\":\"batch\",\"args\":{\"actions\":$actions$stop_on_error}}"
+  run_command_transport "$payload"
+  exit 0
+fi
+
+# OpenCLI-compatible vocabulary aliases for the common browser primitives.
+case "$cmd" in
+  eval) cmd="exec" ;;
+  fill) cmd="fill_form" ;;
+  screenshot) cmd="shot" ;;
+  tab)
+    sub="${1:-}"; shift || true
+    case "$sub" in
+      list) cmd="tabs" ;;
+      new) cmd="newtab" ;;
+      select) cmd="selecttab" ;;
+      close) cmd="closetab" ;;
+      *) echo "error: unsupported tab subcommand: $sub (supported: list, new, select, close)" >&2; exit 2 ;;
+    esac
+    ;;
+esac
+
+SESSION_FILE="${SLEEPER_SESSION_FILE:-.sleeper-session}"
+if [ -z "${SLEEPER_PROFILE:-}" ] && [ -s "$SESSION_FILE" ]; then
+  SLEEPER_PROFILE=$(head -n 1 "$SESSION_FILE")
+  export SLEEPER_PROFILE
+fi
+case "$cmd" in
+  bind)
+    profile="${1:-}"; [[ "$profile" =~ ^[A-Za-z0-9_-]+$ ]] || { echo "error: bind: valid session name required" >&2; exit 1; }
+    printf '%s\n' "$profile" > "$SESSION_FILE"
+    printf '{"ok":true,"bound":"%s"}\n' "$profile"
+    exit 0
+    ;;
+  unbind|close)
+    rm -f "$SESSION_FILE"
+    printf '{"ok":true,"%s":true}\n' "$cmd"
+    exit 0
+    ;;
+esac
+
+# Semantic locator options are shared by OpenCLI write commands. Intercept
+# these forms before the legacy positional parser treats --role as a selector.
+if [ "$cmd" = "wait" ] && [ "${1:-}" = "download" ]; then
+  shift
+  pattern="${1:-}"; [ -n "$pattern" ] && shift || true
+  timeout="15000"
+  while [ $# -gt 0 ]; do
+    case "$1" in --timeout) timeout="${2:?timeout}"; shift 2;; *) shift;; esac
+  done
+  [ -n "$pattern" ] || { echo "error: wait download: pattern required" >&2; exit 1; }
+  payload="{\"cmd\":\"waitDownload\",\"args\":{\"pattern\":$(j "$pattern"),\"timeout_ms\":$timeout}}"
+  run_command_transport "$payload"
+  exit 0
+fi
+
+if [ "$cmd" = "analyze" ]; then
+  url="${1:-}"; [ -n "$url" ] || { echo "error: analyze: URL required" >&2; exit 1; }
+  python3 - "$url" <<'PY'
+import json, sys
+from urllib.parse import urlparse
+u = urlparse(sys.argv[1])
+host = (u.hostname or '').lower()
+signals = []
+if not u.scheme or u.scheme not in ('http', 'https'): signals.append('non-http-url')
+if any(x in host for x in ('cloudflare', 'captcha', 'recaptcha')): signals.append('anti-bot-signal')
+if u.scheme != 'https': signals.append('insecure-transport')
+print(json.dumps({'url': sys.argv[1], 'host': host, 'https': u.scheme == 'https', 'anti_bot': 'anti-bot-signal' in signals, 'signals': signals, 'pattern': 'A' if not signals else 'B', 'next_step': 'open and inspect state/network'}))
+PY
+  exit 0
+fi
+
+if [ "$cmd" = "adapter" ]; then
+  action="${1:-}"; name="${2:-}"
+ python3 "${SLEEPER_ROOT}/cli/adapter.py" "$action" "$name"
+  exit $?
+fi
+
+case "$cmd" in
+  fill_form)
+    for _arg in "$@"; do case "$_arg" in --role|--name|--label|--text|--testid) run_semantic_fill "$@"; exit $?;; esac; done
+    ;;
+  drag)
+    for _arg in "$@"; do case "$_arg" in --source-*|--target-*) run_semantic_drag "$@"; exit $?;; esac; done
+    ;;
+  click|type|hover|focus|dblclick|check|uncheck|select)
+    for _arg in "$@"; do
+      case "$_arg" in --role|--name|--label|--text|--testid) run_semantic_action "$cmd" "$@"; exit $?;; esac
+    done
+    ;;
+esac
+
+case "$cmd" in
+  sessions)  payload='{"cmd":"sessions"}' ;;
+  state)     payload='{"cmd":"state"}' ;;
+  tabs)      payload='{"cmd":"tabs"}' ;;
+  selecttab|closetab)
+    target=""; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        -*) shift ;;
+        *) [ -z "$target" ] && target="$1"; shift ;;
+      esac
+    done
+    [ -n "$target" ] || target="$tab"
+    [ -n "$target" ] || { echo "error: tab action requires a target" >&2; exit 1; }
+    payload="{\"cmd\":\"$cmd\",\"args\":{\"target\":$(j "$target")}}"
+    ;;
+  back)      payload='{"cmd":"back"}' ;;
+  frames)    payload='{"cmd":"frames"}' ;;
+  get)
+    sel=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --selector) sel="${2:?selector}"; shift 2 ;;
+        -*) shift ;;
+        *) [ -z "$sel" ] && sel="$1"; shift ;;
+      esac
+    done
+    if [ -n "$sel" ]; then
+      payload="{\"cmd\":\"get\",\"args\":{\"selector\":$(j "$sel")}}"
+    else
+      payload='{"cmd":"get","args":{}}'
+    fi
+    ;;
+  snapshot)
+    tab=""; selector=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        --selector) selector="${2:?selector}"; shift 2 ;;
+        *) break ;;
+      esac
+    done
+    if [ -n "$tab" ]; then
+      payload="{\"cmd\":\"snapshot\",\"args\":{\"tab\":$(j "$tab")}}"
+    else
+      payload='{"cmd":"snapshot","args":{}}'
+    fi
+    ;;
+  forms)
+    tab=""; selector=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        --selector) selector="${2:?selector}"; shift 2 ;;
+        *) break ;;
+      esac
+    done
+    if [ -n "$tab" ]; then
+      payload="{\"cmd\":\"forms\",\"args\":{\"tab\":$(j "$tab")}}"
+    else
+      payload='{"cmd":"forms","args":{}}'
+    fi
+    ;;
+
+  newtab)
+    url="${1:-about:blank}"
+    payload="{\"cmd\":\"newtab\",\"args\":{\"url\":$(j "$url")}}"
+    ;;
+
+  goto)
+    url=""; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        -*) shift ;;
+        *) [ -z "$url" ] && url="$1"; shift ;;
+      esac
+    done
+    [ -n "$url" ] || { echo "error: goto: url required" >&2; exit 1; }
+    extra="${tab:+, \"tab\":$(j "$tab")}"
+    payload="{\"cmd\":\"goto\",\"args\":{\"url\":$(j "$url")$extra}}"
+    ;;
+
+  wait_url)
+    pattern=""; timeout_ms="15000"; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --timeout) timeout_ms="${2:?timeout}"; shift 2 ;;
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        -*) shift ;;
+        *) [ -z "$pattern" ] && pattern="$1"; shift ;;
+      esac
+    done
+    [ -n "$pattern" ] || { echo "error: wait_url: pattern required" >&2; exit 1; }
+    extra="${tab:+, \"tab\":$(j "$tab")}"
+    payload="{\"cmd\":\"wait_url\",\"args\":{\"pattern\":$(j "$pattern"),\"timeout_ms\":$timeout_ms$extra}}"
+    ;;
+
+  find)
+    sel=""; role=""; name=""; label=""; text=""; testid=""; tab=""; limit="50"
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --role) role="${2:?role}"; shift 2 ;;
+        --name) name="${2:?name}"; shift 2 ;;
+        --label) label="${2:?label}"; shift 2 ;;
+        --text) text="${2:?text}"; shift 2 ;;
+        --testid) testid="${2:?testid}"; shift 2 ;;
+        --limit) limit="${2:?limit}"; shift 2 ;;
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        -*) shift ;;
+        *) [ -z "$sel" ] && sel="$1"; shift ;;
+      esac
+    done
+    extra="${tab:+, \"tab\":$(j "$tab")}"
+    semantic=""
+    [ -n "$role" ] && semantic="$semantic, \"role\":$(j "$role")"
+    [ -n "$name" ] && semantic="$semantic, \"name\":$(j "$name")"
+    [ -n "$label" ] && semantic="$semantic, \"label\":$(j "$label")"
+    [ -n "$text" ] && semantic="$semantic, \"text\":$(j "$text")"
+    [ -n "$testid" ] && semantic="$semantic, \"testid\":$(j "$testid")"
+    if [ -n "$semantic" ]; then
+      payload="{\"cmd\":\"find\",\"args\":{${semantic#,}, \"limit\":$limit$extra}}"
+    else
+      [ -n "$sel" ] || { echo "error: find: selector or semantic locator required" >&2; exit 1; }
+      payload="{\"cmd\":\"find\",\"args\":{\"selector\":$(j "$sel"), \"limit\":$limit$extra}}"
+    fi
+    ;;
+  click)
+    sel=""; role=""; name=""; label=""; text=""; testid=""; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --role) role="${2:?role}"; shift 2 ;;
+        --name) name="${2:?name}"; shift 2 ;;
+        --label) label="${2:?label}"; shift 2 ;;
+        --text) text="${2:?text}"; shift 2 ;;
+        --testid) testid="${2:?testid}"; shift 2 ;;
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        -*) shift ;;
+        *) [ -z "$sel" ] && sel="$1"; shift ;;
+      esac
+    done
+    [ -n "$sel" ] || [ -n "$role" ] || [ -n "$name" ] || [ -n "$label" ] || [ -n "$text" ] || [ -n "$testid" ] || { echo "error: click: selector or semantic locator required" >&2; exit 1; }
+    extra="${tab:+, \"tab\":$(j "$tab")}"
+    semantic=""
+    [ -n "$role" ] && semantic="$semantic, \"role\":$(j "$role")"
+    [ -n "$name" ] && semantic="$semantic, \"name\":$(j "$name")"
+    [ -n "$label" ] && semantic="$semantic, \"label\":$(j "$label")"
+    [ -n "$text" ] && semantic="$semantic, \"text\":$(j "$text")"
+    [ -n "$testid" ] && semantic="$semantic, \"testid\":$(j "$testid")"
+    payload="{\"cmd\":\"click\",\"args\":{\"selector\":$(j "$sel")${semantic}${extra}}}"
+    ;;
+  click_all)
+    sel=""; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        -*) shift ;;
+        *) [ -z "$sel" ] && sel="$1"; shift ;;
+      esac
+    done
+    [ -n "$sel" ] || { echo "error: click_all: selector required" >&2; exit 1; }
+    extra="${tab:+, \"tab\":$(j "$tab")}"
+    payload="{\"cmd\":\"clickAll\",\"args\":{\"selector\":$(j "$sel")$extra}}"
+    ;;
+  hover)
+    sel=""; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        -*) shift ;;
+        *) [ -z "$sel" ] && sel="$1"; shift ;;
+      esac
+    done
+    [ -n "$sel" ] || { echo "error: hover: selector required" >&2; exit 1; }
+    extra="${tab:+, \"tab\":$(j "$tab")}"
+    payload="{\"cmd\":\"hover\",\"args\":{\"selector\":$(j "$sel")$extra}}"
+    ;;
+  focus)
+    sel=""; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        -*) shift ;;
+        *) [ -z "$sel" ] && sel="$1"; shift ;;
+      esac
+    done
+    [ -n "$sel" ] || { echo "error: focus: selector required" >&2; exit 1; }
+    extra="${tab:+, \"tab\":$(j "$tab")}"
+    payload="{\"cmd\":\"focus\",\"args\":{\"selector\":$(j "$sel")$extra}}"
+    ;;
+
+  find_text)
+    text=""; exact=""; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --exact) exact="true"; shift ;;
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        -*) shift ;;
+        *) [ -z "$text" ] && text="$1"; shift ;;
+      esac
+    done
+    [ -n "$text" ] || { echo "error: find_text: text required" >&2; exit 1; }
+    extra="${exact:+, \"exact\":true}${tab:+, \"tab\":$(j "$tab")}"
+    payload="{\"cmd\":\"findText\",\"args\":{\"text\":$(j "$text")$extra}}"
+    ;;
+
+  click_text)
+    text=""; index=""; exact=""; verify=""; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --index) index="${2:?index}"; shift 2 ;;
+        --exact) exact="true"; shift ;;
+        --verify) verify="${2:?verify}"; shift 2 ;;
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        -*) shift ;;
+        *) [ -z "$text" ] && text="$1"; shift ;;
+      esac
+    done
+    [ -n "$text" ] || { echo "error: click_text: text required" >&2; exit 1; }
+    extra="${verify:+, \"verify\":$(j "$verify")}${index:+, \"index\":$index}${exact:+, \"exact\":true}${tab:+, \"tab\":$(j "$tab")}"
+    payload="{\"cmd\":\"clickText\",\"args\":{\"text\":$(j "$text")$extra}}"
+    ;;
+
+  wait_text)
+    text=""; timeout_ms="10000"; exact=""; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --timeout) timeout_ms="${2:?timeout}"; shift 2 ;;
+        --exact) exact="true"; shift ;;
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        -*) shift ;;
+        *) [ -z "$text" ] && text="$1"; shift ;;
+      esac
+    done
+    [ -n "$text" ] || { echo "error: wait_text: text required" >&2; exit 1; }
+    extra="${exact:+, \"exact\":true}${tab:+, \"tab\":$(j "$tab")}"
+    payload="{\"cmd\":\"waitText\",\"args\":{\"text\":$(j "$text"),\"timeout_ms\":$timeout_ms$extra}}"
+    ;;
+
+  type)
+    pos=(); clear="false"; stealth="false"; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --clear) clear="true"; shift ;;
+        --stealth) stealth="true"; shift ;;
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        -*) shift ;;
+        *) pos+=("$1"); shift ;;
+      esac
+    done
+    sel="${pos[0]:-}"; text="${pos[1]:-}"
+    [ -n "$sel" ] && [ -n "$text" ] || { echo "error: type: selector and text required" >&2; exit 1; }
+    extra="${tab:+, \"tab\":$(j "$tab")}"
+    payload="{\"cmd\":\"type\",\"args\":{\"selector\":$(j "$sel"),\"text\":$(j "$text"),\"clear\":$clear,\"stealth\":$stealth$extra}}"
+    ;;
+
+  keys)
+    keys=(); tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        *) keys+=("$(j "$1")"); shift ;;
+      esac
+    done
+    extra="${tab:+, \"tab\":$(j "$tab")}"
+    payload="{\"cmd\":\"keys\",\"args\":{\"keys\":[$(IFS=,; echo "${keys[*]}")]$extra}}"
+    ;;
+
+  press)
+    key=""; sel=""; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --selector) sel="${2:?selector}"; shift 2 ;;
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        -*) shift ;;
+        *) [ -z "$key" ] && key="$1"; shift ;;
+      esac
+    done
+    [ -n "$key" ] || { echo "error: press: key required" >&2; exit 1; }
+    extra="${sel:+, \"selector\":$(j "$sel")}${tab:+, \"tab\":$(j "$tab")}"
+    payload="{\"cmd\":\"press\",\"args\":{\"key\":$(j "$key")$extra}}"
+    ;;
+
+  read)
+    sel=""; what="text"; attr=""; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --html) what="html"; shift ;;
+        --value) what="value"; shift ;;
+        --attr) what="attr"; attr="${2:?attr}"; shift 2 ;;
+        --attr=*) what="attr"; attr="${1#--attr=}"; shift ;;
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        -*) shift ;;
+        *) [ -z "$sel" ] && sel="$1"; shift ;;
+      esac
+    done
+    [ -n "$sel" ] || { echo "error: read: selector required" >&2; exit 1; }
+    extra="${attr:+, \"attr\":$(j "$attr")}${tab:+, \"tab\":$(j "$tab")}"
+    payload="{\"cmd\":\"read\",\"args\":{\"selector\":$(j "$sel"),\"what\":$(j "$what")$extra}}"
+    ;;
+
+  read_all)
+    sel=""; what="text"; attr=""; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --html) what="html"; shift ;;
+        --value) what="value"; shift ;;
+        --attr) what="attr"; attr="${2:?attr}"; shift 2 ;;
+        --attr=*) what="attr"; attr="${1#--attr=}"; shift ;;
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        -*) shift ;;
+        *) [ -z "$sel" ] && sel="$1"; shift ;;
+      esac
+    done
+    [ -n "$sel" ] || { echo "error: read_all: selector required" >&2; exit 1; }
+    extra="${attr:+, \"attr\":$(j "$attr")}${tab:+, \"tab\":$(j "$tab")}"
+    payload="{\"cmd\":\"readAll\",\"args\":{\"selector\":$(j "$sel"),\"what\":$(j "$what")$extra}}"
+    ;;
+
+  submit)
+    sel=""; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --selector) sel="${2:?selector}"; shift 2 ;;
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        *) shift ;;
+      esac
+    done
+    if [ -n "$sel" ]; then
+      extra="${tab:+, \"tab\":$(j "$tab")}"
+      payload="{\"cmd\":\"submit\",\"args\":{\"selector\":$(j "$sel")$extra}}"
+    elif [ -n "$tab" ]; then
+      payload="{\"cmd\":\"submit\",\"args\":{\"tab\":$(j "$tab")}}"
+    else
+      payload='{"cmd":"submit","args":{}}'
+    fi
+    ;;
+
+  wait)
+    sel=""; timeout="10000"; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --timeout) timeout="${2:-10000}"; shift 2 ;;
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        -*) shift ;;
+        *) [ -z "$sel" ] && sel="$1"; shift ;;
+      esac
+    done
+    [ -n "$sel" ] || { echo "error: wait: selector required" >&2; exit 1; }
+    extra="${tab:+, \"tab\":$(j "$tab")}"
+    payload="{\"cmd\":\"waitFor\",\"args\":{\"selector\":$(j "$sel"),\"timeout\":$timeout$extra}}"
+    ;;
+
+  wait_until)
+    spec=""; timeout="10000"; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --timeout) timeout="${2:-10000}"; shift 2 ;;
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        -*) shift ;;
+        *) [ -z "$spec" ] && spec="$1"; shift ;;
+      esac
+    done
+    [ -n "$spec" ] || { echo "error: wait_until: condition required" >&2; exit 1; }
+    extra="${tab:+, \"tab\":$(j "$tab")}"
+    if [[ "$spec" == \{* ]]; then
+      payload="{\"cmd\":\"waitUntil\",\"args\":{\"condition\":$spec,\"timeout\":$timeout$extra}}"
+    else
+      payload="{\"cmd\":\"waitUntil\",\"args\":{\"predicate\":$(j "$spec"),\"timeout\":$timeout$extra}}"
+    fi
+    ;;
+
+  exec)
+    code=""; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        -*) shift ;;
+        *) [ -z "$code" ] && code="$1"; shift ;;
+      esac
+    done
+    [ -n "$code" ] || { echo "error: exec: code required" >&2; exit 1; }
+    extra="${tab:+, \"tab\":$(j "$tab")}"
+    payload="{\"cmd\":\"exec\",\"args\":{\"code\":$(j "$code")$extra}}"
+    ;;
+  fill_form)
+    fields=""; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        -*) shift ;;
+        *) [ -z "$fields" ] && fields="$1"; shift ;;
+      esac
+    done
+    [ -n "$fields" ] || { echo "error: fill_form: json required" >&2; exit 1; }
+    extra="${tab:+, \"tab\":$(j "$tab")}"
+    payload="{\"cmd\":\"fillForm\",\"args\":{\"fields\":$(printf '%s' "$fields")$extra}}"
+    ;;
+  select)
+    pos=(); tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        -*) shift ;;
+        *) pos+=("$1"); shift ;;
+      esac
+    done
+    sel="${pos[0]:-}"; val="${pos[1]:-}"
+    [ -n "$sel" ] && [ -n "$val" ] || { echo "error: select: selector and value required" >&2; exit 1; }
+    extra="${tab:+, \"tab\":$(j "$tab")}"
+    payload="{\"cmd\":\"selectOption\",\"args\":{\"selector\":$(j "$sel"),\"value\":$(j "$val")$extra}}"
+    ;;
+  extract)
+    map=""; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        -*) shift ;;
+        *) [ -z "$map" ] && map="$1"; shift ;;
+      esac
+    done
+    [ -n "$map" ] || { echo "error: extract: json required" >&2; exit 1; }
+    extra="${tab:+, \"tab\":$(j "$tab")}"
+    payload="{\"cmd\":\"extract\",\"args\":{\"map\":$(printf '%s' "$map")$extra}}"
+    ;;
+
+  scroll)
+    sel=""; y=""; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --selector) sel="${2:?selector}"; shift 2 ;;
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        *) y="${1:-400}"; shift ;;
+      esac
+    done
+    extra="${tab:+, \"tab\":$(j "$tab")}"
+    if [ -n "$sel" ]; then
+      payload="{\"cmd\":\"scroll\",\"args\":{\"selector\":$(j "$sel")$extra}}"
+    else
+      payload="{\"cmd\":\"scroll\",\"args\":{\"y\":${y:-400}$extra}}"
+    fi
+    ;;
+
+  scroll_until)
+    container=""; text=""; selector=""; max=40; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --container) container="${2:?container}"; shift 2 ;;
+        --text) text="${2:?text}"; shift 2 ;;
+        --selector) selector="${2:?selector}"; shift 2 ;;
+        --max) max="${2:?max}"; shift 2 ;;
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        *) shift ;;
+      esac
+    done
+    if [ -z "$text" ] && [ -z "$selector" ]; then
+      echo "error: scroll_until requires at least one of --text or --selector" >&2
+      exit 1
+    fi
+    extra="${tab:+, \"tab\":$(j "$tab")}"
+    payload="{\"cmd\":\"scrollUntil\",\"args\":{\"container\":$(j "$container"),\"text\":$(j "$text"),\"selector\":$(j "$selector"),\"max_iters\":$max$extra}}"
+    ;;
+
+  wait_dialog)
+    text=""; timeout_ms="15000"; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --text) text="${2:?text}"; shift 2 ;;
+        --timeout) timeout_ms="${2:?timeout}"; shift 2 ;;
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        *) shift ;;
+      esac
+    done
+    extra="${tab:+, \"tab\":$(j "$tab")}"
+    payload="{\"cmd\":\"waitDialog\",\"args\":{\"text\":$(j "$text"),\"timeout_ms\":$timeout_ms$extra}}"
+    ;;
+
+  network)
+    media="false"; since="0"; clear="false"; body="false"; fetch_url=""; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --media) media="true"; shift ;;
+        --clear) clear="true"; shift ;;
+        --body) body="true"; shift ;;
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        --fetch=*) fetch_url="${1#--fetch=}"; shift ;;
+        --since=*) since="${1#--since=}"; shift ;;
+        *) shift ;;
+      esac
+    done
+    extra=""
+    [ -n "$tab" ] && extra=",\"tab\":$(j "$tab")"
+    [ -n "$fetch_url" ] && extra="${extra},\"fetch\":true,\"url\":$(j "$fetch_url")"
+    [ "$body" = true ] && extra="${extra},\"body\":true"
+    payload="{\"cmd\":\"network\",\"args\":{\"media\":$media,\"since\":$since,\"clear\":$clear$extra}}"
+    ;;
+
+  media)
+    payload='{"cmd":"media","args":{"media":true}}'
+    ;;
+
+  api)
+    url="${1:?url}"; method="GET"; body=""
+    shift
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --method) method="${2:?method}"; shift 2 ;;
+        --body) body="${2:?body}"; shift 2 ;;
+        *) shift ;;
+      esac
+    done
+    extra=""
+    if [ -n "$body" ]; then extra=", \"body\":$(j "$body")"; fi
+    payload="{\"cmd\":\"api\",\"args\":{\"url\":$(j "$url"),\"method\":$(j "$method")$extra}}"
+    ;;
+
+  console)
+    lines="50"
+    [[ "${1:-}" == "--lines" ]] && lines="${2:-50}"
+    payload="{\"cmd\":\"console\",\"args\":{\"limit\":$lines,\"lines\":$lines}}"
+    ;;
+
+  shot)
+    tab=""; url=""; outfile=""; full_page="false"; annotate="false"; width=""; height=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        --url) url="${2:?url}"; shift 2 ;;
+        --full-page) full_page="true"; shift ;;
+        --annotate) annotate="true"; shift ;;
+        --width) width="${2:?width}"; shift 2 ;;
+        --height) height="${2:?height}"; shift 2 ;;
+        -*) shift ;;
+        *)
+          if [ -z "$url" ] && [[ "$1" == http* ]]; then url="$1";
+          elif [ -z "$outfile" ] && [[ "$1" != http* ]]; then outfile="$1";
+          fi
+          shift ;;
+      esac
+    done
+    extra="${tab:+, \"tab\":$(j "$tab")}"; [ "$full_page" = true ] && extra="$extra, \"full_page\":true"; [ "$annotate" = true ] && extra="$extra, \"annotate\":true"; [ -n "$width" ] && extra="$extra, \"width\":$width"; [ -n "$height" ] && extra="$extra, \"height\":$height"
+    if [ -n "$url" ]; then
+      goto_payload="{\"cmd\":\"goto\",\"args\":{\"url\":$(j "$url")${extra}}}"
+      post_payload "$goto_payload" >/dev/null
+      sleep 3
+    fi
+    payload="{\"cmd\":\"shot\",\"args\":{${extra#, }}}"
+    if [ -n "$outfile" ]; then
+      resp=$(post_payload "$payload")
+      post_and_check "$payload" "$resp" >/dev/null || exit 1
+      printf '%s' "$resp" | python3 -c 'import json,sys,base64;
+out=sys.argv[1];
+d=json.loads(sys.stdin.read());
+r=d.get("result",d);
+u=r.get("dataUrl","");
+sys.exit("no dataUrl in response: "+str(d)[:200]) if "," not in u else None;
+open(out,"wb").write(base64.b64decode(u.split(",",1)[1]));
+print("saved "+out)' "$outfile" || exit $?
+      exit 0
+    fi
+    ;;
+  screenshot) "$0" shot "$@" ; exit $? ;;
+
+  upload)
+    sel=""; files_str=""; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --files) files_str="${2:?files}"; shift 2 ;;
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        -*) shift ;;
+        *) [ -z "$sel" ] && sel="$1"; shift ;;
+      esac
+    done
+    [ -n "$sel" ] || { echo "error: upload: selector required" >&2; exit 1; }
+    if [ -z "$files_str" ]; then
+      echo "error: upload requires --files 'a.txt,b.txt'" >&2
+      exit 1
+    fi
+    IFS=',' read -ra farr <<< "$files_str"
+    files_json=()
+    for f in "${farr[@]}"; do
+      f="$(printf '%s' "$f" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+      files_json+=("$(payload_file "$f")")
+    done
+    extra="${tab:+, \"tab\":$(j "$tab")}"
+    payload="{\"cmd\":\"upload\",\"args\":{\"selector\":$(j "$sel"),\"files\":[$(IFS=,; echo "${files_json[*]}")]$extra}}"
+    ;;
+
+  drag)
+    pos=(); tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        -*) shift ;;
+        *) pos+=("$1"); shift ;;
+      esac
+    done
+    src="${pos[0]:-}"; tgt="${pos[1]:-}"
+    [ -n "$src" ] && [ -n "$tgt" ] || { echo "error: drag: source and target required" >&2; exit 1; }
+    extra="${tab:+, \"tab\":$(j "$tab")}"
+    payload="{\"cmd\":\"drag\",\"args\":{\"source\":$(j "$src"),\"target\":$(j "$tgt")$extra}}"
+    ;;
+
+  dblclick)
+    sel=""; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        -*) shift ;;
+        *) [ -z "$sel" ] && sel="$1"; shift ;;
+      esac
+    done
+    [ -n "$sel" ] || { echo "error: dblclick: selector required" >&2; exit 1; }
+    extra="${tab:+, \"tab\":$(j "$tab")}"
+    payload="{\"cmd\":\"dblclick\",\"args\":{\"selector\":$(j "$sel")$extra}}"
+    ;;
+  check)
+    sel=""; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        -*) shift ;;
+        *) [ -z "$sel" ] && sel="$1"; shift ;;
+      esac
+    done
+    [ -n "$sel" ] || { echo "error: check: selector required" >&2; exit 1; }
+    extra="${tab:+, \"tab\":$(j "$tab")}"
+    payload="{\"cmd\":\"check\",\"args\":{\"selector\":$(j "$sel")$extra}}"
+    ;;
+  uncheck)
+    sel=""; tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        -*) shift ;;
+        *) [ -z "$sel" ] && sel="$1"; shift ;;
+      esac
+    done
+    [ -n "$sel" ] || { echo "error: uncheck: selector required" >&2; exit 1; }
+    extra="${tab:+, \"tab\":$(j "$tab")}"
+    payload="{\"cmd\":\"uncheck\",\"args\":{\"selector\":$(j "$sel")$extra}}"
+    ;;
+
+  wait_xhr)
+    url_sub="${1:?url_substring}"; method=""; timeout_ms="15000"
+    shift
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --method) method="${2:?method}"; shift 2 ;;
+        --timeout) timeout_ms="${2:?timeout}"; shift 2 ;;
+        *) shift ;;
+      esac
+    done
+    extra="${method:+, \"method\":$(j "$method")}"
+    payload="{\"cmd\":\"waitXhr\",\"args\":{\"url_substring\":$(j "$url_sub"),\"timeout_ms\":$timeout_ms$extra}}"
+    ;;
+
+  dialog) payload='{"cmd":"dialog","args":{}}' ;;
+
+  recipe) run_recipe "${1:-}" "${2:-}" && exit 0 || exit $? ;;
+
+  schema) run_schema "$@" && exit 0 || exit $? ;;
+
+  *) usage ;;
+esac
+
+if [ "${SLEEPER_DRY_RUN:-0}" = "1" ]; then
+  post_payload "$payload"
+else
+  run_command_transport "$payload"
+fi

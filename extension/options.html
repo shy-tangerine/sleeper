@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sleeper settings</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <main>
+    <header class="masthead">
+      <div class="title-lockup">
+        <img src="icon128.png" alt="" class="mark">
+        <h1>Sleeper</h1>
+      </div>
+      <div class="masthead-actions">
+        <p id="connection" class="connection" aria-live="polite"><i aria-hidden="true"></i>Checking bridge…</p>
+        <a class="activity-jump" href="#log">Recent actions</a>
+      </div>
+    </header>
+
+    <div class="settings-list" aria-label="Settings">
+      <div class="setting-row">
+        <div>
+          <div class="setting-title">
+            <h2>Command access</h2>
+            <button class="info-trigger" type="button" aria-label="Explain command access" aria-describedby="scope-detail"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5"></circle><path d="M8 7v4M8 4.5h.01"></path></svg></button>
+          </div>
+          <p>Choose which tabs Sleeper can operate. Saved in this browser profile.</p>
+          <p id="scope-detail" class="setting-detail">All tabs permits commands in any open tab. Active tab restricts commands to the tab you are viewing. Paused keeps the bridge connected but refuses page commands.</p>
+        </div>
+        <div class="button-group" role="group" aria-label="Command access" aria-describedby="scope-detail">
+          <button type="button" data-setting="scope" data-value="all_tabs" aria-pressed="false">All tabs</button>
+          <button type="button" data-setting="scope" data-value="active_tab" aria-pressed="false">Active tab</button>
+          <button type="button" data-setting="scope" data-value="disabled" aria-pressed="false">Paused</button>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <div>
+          <div class="setting-title">
+            <h2>Activity cues</h2>
+            <button class="info-trigger" type="button" aria-label="Explain activity cues" aria-describedby="activity-detail"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5"></circle><path d="M8 7v4M8 4.5h.01"></path></svg></button>
+          </div>
+          <p>Show visual feedback while Sleeper works. Typed text is never shown.</p>
+          <p id="activity-detail" class="setting-detail">Displays brief highlights for clicks, typing, and scrolling only while the page is visible and focused. Turning this off immediately removes active cues.</p>
+        </div>
+        <label class="switch" for="visible-activity" aria-describedby="activity-detail">
+          <input id="visible-activity" type="checkbox">
+          <span aria-hidden="true"></span>
+          <b class="sr-only">Show visible activity cues</b>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <div>
+          <div class="setting-title">
+            <h2>Focus behavior</h2>
+            <button class="info-trigger" type="button" aria-label="Explain focus behavior" aria-describedby="focus-detail"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5"></circle><path d="M8 7v4M8 4.5h.01"></path></svg></button>
+          </div>
+          <p>Choose when Sleeper focuses a control during an action.</p>
+          <p id="focus-detail" class="setting-detail">When needed activates a target only when Sleeper cannot reach it. Always activates the target before focused actions. Minimized Firefox windows are never restored automatically.</p>
+        </div>
+        <div class="button-group" role="group" aria-label="Focus behavior" aria-describedby="focus-detail">
+          <button type="button" data-setting="focus" data-value="needed" aria-pressed="false">When needed</button>
+          <button type="button" data-setting="focus" data-value="always" aria-pressed="false">Always</button>
+        </div>
+      </div>
+
+      <div class="setting-row identity-row">
+        <div>
+          <div class="setting-title">
+            <h2>Browser installation</h2>
+          </div>
+          <p>Sleeper routes commands with this private installation identifier.</p>
+          <p class="browser-id">Installation ID: <code id="browser-id">Loading…</code></p>
+        </div>
+      </div>
+
+      <div id="daemon-connection" class="setting-row identity-row connection-row" tabindex="-1">
+        <div>
+          <div class="setting-title"><h2>Daemon connection</h2></div>
+          <p id="connection-mode" class="connection-mode">Local · This computer</p>
+          <p id="daemon-help">Localhost is the default. Mobile connections use your private Tailscale network.</p>
+          <div id="connection-approval" class="connection-approval" hidden>
+            <strong>Approve new daemon?</strong>
+            <p>Setup verified a different daemon. Review the proposed host before replacing the current connection.</p>
+            <p id="connection-proposal" class="connection-proposal"></p>
+            <div class="button-group">
+              <button id="approve-connection" type="button">Approve</button>
+              <button id="dismiss-connection" type="button">Not now</button>
+            </div>
+          </div>
+        </div>
+        <div class="connection-controls">
+          <p id="connection-status" class="connection-status" aria-live="polite"><i aria-hidden="true"></i><span>Checking status…</span></p>
+          <button id="connection-action" class="secondary-button connection-action" type="button">Reconnect</button>
+        </div>
+      </div>
+    </div>
+
+    <section id="log" class="activity" aria-labelledby="log-heading" tabindex="-1">
+      <div class="activity-head">
+        <div>
+          <div class="activity-title">
+            <h2 id="log-heading">Recent actions</h2>
+            <button class="info-trigger" type="button" aria-label="Explain recent actions" aria-describedby="recent-actions-detail"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5"></circle><path d="M8 7v4M8 4.5h.01"></path></svg></button>
+            <span id="preview-label" class="preview-label" hidden>Example data</span>
+          </div>
+          <p id="activity-status" aria-live="polite">No action is running.</p>
+          <p id="recent-actions-detail" class="activity-detail">Shows the outcome, duration, target, and local time for up to 200 actions. The newest 10 appear first; use View all to expand the history. Typed values are never displayed.</p>
+        </div>
+        <button id="clear" class="secondary-button" type="button">Clear</button>
+      </div>
+      <p id="empty" class="empty">No actions yet.</p>
+      <ol id="entries" aria-live="polite"></ol>
+      <button id="more" class="more-button" type="button" hidden></button>
+    </section>
+
+    <p id="saved" class="saved" aria-live="polite"></p>
+
+    <footer>
+      <a href="https://github.com/shy-tangerine/Sleeper" target="_blank" rel="noreferrer">Repository</a>
+      <a href="https://github.com/shy-tangerine/Sleeper/blob/main/docs/commands.md" target="_blank" rel="noreferrer">Commands</a>
+      <a href="https://github.com/shy-tangerine/Sleeper/blob/main/docs/installation.md" target="_blank" rel="noreferrer">Installation</a>
+      <a href="https://github.com/shy-tangerine/Sleeper#readme" target="_blank" rel="noreferrer">Documentation</a>
+    </footer>
+  </main>
+  <script src="daemon_endpoint.js"></script>
+  <script src="action-labels.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

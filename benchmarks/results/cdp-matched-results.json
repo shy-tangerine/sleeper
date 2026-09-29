@@ -1,0 +1,2743 @@
+{
+  "browser": "same Chromium binary, one fresh disposable persistent profile",
+  "browser_baseline_excluded": true,
+  "browser_process_scope": {
+    "cpu_seconds": 2.58,
+    "cpu_seconds_delta": 0.9,
+    "process_count": 13,
+    "rss_bytes": 1096695808,
+    "scope": "all Chromium processes whose command line has this disposable --user-data-dir"
+  },
+  "browser_version": "Chrome/153.0.8010.36",
+  "canaries": {
+    "API": "matched-cdp-api",
+    "COOKIE": "matched-cdp-cookie",
+    "DOM": "matched-cdp-dom",
+    "HEADER": "matched-cdp-header",
+    "LOCAL": "matched-cdp-local"
+  },
+  "capture_normalization": {
+    "excluded_host_details": "Disposable-profile paths are never recorded; browser process identifiers are reduced to process_count.",
+    "stored_protocol": "CDP request/response JSON preserves methods and message shape; local ports, numeric request IDs, 32-character CDP frame/loader/target identifiers, and matched run values are replaced with stable placeholders.",
+    "token_text": "token_measurement.py canonicalizes fixture ports and numeric request IDs before o200k_base counting."
+  },
+  "iterations": 5,
+  "mode": "deterministic browser primitives; excludes agent/model performance",
+  "operations": [
+    "navigate",
+    "read_h1",
+    "type",
+    "click",
+    "wait_delayed_text",
+    "read_result"
+  ],
+  "runs": [
+    {
+      "browser_process_scope": {
+        "cpu_seconds": 2.05,
+        "cpu_seconds_delta": 0.32,
+        "process_count": 13,
+        "rss_bytes": 1081909248,
+        "scope": "all Chromium processes whose command line has this disposable --user-data-dir"
+      },
+      "protocol_tokens": {
+        "request_tokens": 529,
+        "response_tokens": 318,
+        "total_tokens": 847
+      },
+      "run": 1,
+      "sequence_ms": 341.713,
+      "status": "pass",
+      "steps": [
+        {
+          "ms": 100.545,
+          "operation": "navigate",
+          "protocol": [
+            {
+              "method": "Page.navigate",
+              "request": {
+                "id": 0,
+                "method": "Page.navigate",
+                "params": {
+                  "url": "http://127.0.0.1:<PORT>/"
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Page.navigate\",\"params\":{\"url\":\"http://127.0.0.1:00000/\"}}",
+              "request_tokens": 28,
+              "response": {
+                "id": 0,
+                "result": {
+                  "frameId": "<CDP_IDENTIFIER>",
+                  "isDownload": false,
+                  "loaderId": "<CDP_IDENTIFIER>"
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"frameId\":\"455B49CAD70467A2F2C3337E6088333A\",\"isDownload\":false,\"loaderId\":\"88868F9477980C7AC5553A016661FA9B\"}}",
+              "response_tokens": 55,
+              "total_tokens": 83
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 28,
+            "response_tokens": 55,
+            "total_tokens": 83
+          }
+        },
+        {
+          "ms": 6.521,
+          "operation": "read_h1",
+          "protocol": [
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "expression": "document.querySelector('h1').innerText",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"expression\":\"document.querySelector('h1').innerText\",\"returnByValue\":true}}",
+              "request_tokens": 30,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "string",
+                    "value": "Synthetic browser benchmark"
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"string\",\"value\":\"Synthetic browser benchmark\"}}}",
+              "response_tokens": 20,
+              "total_tokens": 50
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 30,
+            "response_tokens": 20,
+            "total_tokens": 50
+          }
+        },
+        {
+          "ms": 19.085,
+          "operation": "type",
+          "protocol": [
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "expression": "document.querySelector('#input').focus()",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"expression\":\"document.querySelector('#input').focus()\",\"returnByValue\":true}}",
+              "request_tokens": 29,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "undefined"
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"undefined\"}}}",
+              "response_tokens": 14,
+              "total_tokens": 43
+            },
+            {
+              "method": "Input.insertText",
+              "request": {
+                "id": 0,
+                "method": "Input.insertText",
+                "params": {
+                  "text": "matched-N"
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Input.insertText\",\"params\":{\"text\":\"matched-N\"}}",
+              "request_tokens": 18,
+              "response": {
+                "id": 0,
+                "result": {}
+              },
+              "response_text": "{\"id\":0,\"result\":{}}",
+              "response_tokens": 9,
+              "total_tokens": 27
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "expression": "document.querySelector('#input').value",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"expression\":\"document.querySelector('#input').value\",\"returnByValue\":true}}",
+              "request_tokens": 28,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "string",
+                    "value": "matched-N"
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"string\",\"value\":\"matched-N\"}}}",
+              "response_tokens": 19,
+              "total_tokens": 47
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 75,
+            "response_tokens": 42,
+            "total_tokens": 117
+          }
+        },
+        {
+          "ms": 2.045,
+          "operation": "click",
+          "protocol": [
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "expression": "document.querySelector('#action').click()",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"expression\":\"document.querySelector('#action').click()\",\"returnByValue\":true}}",
+              "request_tokens": 29,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "undefined"
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"undefined\"}}}",
+              "response_tokens": 14,
+              "total_tokens": 43
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 29,
+            "response_tokens": 14,
+            "total_tokens": 43
+          }
+        },
+        {
+          "ms": 212.099,
+          "operation": "wait_delayed_text",
+          "protocol": [
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": true
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":true}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 324,
+            "response_tokens": 162,
+            "total_tokens": 486
+          }
+        },
+        {
+          "ms": 0.946,
+          "operation": "read_result",
+          "protocol": [
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "expression": "({text: document.querySelector('#result').innerText, hidden: document.querySelector('#result').hidden})",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"expression\":\"({text: document.querySelector('#result').innerText, hidden: document.querySelector('#result').hidden})\",\"returnByValue\":true}}",
+              "request_tokens": 43,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "object",
+                    "value": {
+                      "hidden": false,
+                      "text": "Action complete"
+                    }
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"object\",\"value\":{\"hidden\":false,\"text\":\"Action complete\"}}}}",
+              "response_tokens": 25,
+              "total_tokens": 68
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 43,
+            "response_tokens": 25,
+            "total_tokens": 68
+          }
+        }
+      ]
+    },
+    {
+      "browser_process_scope": {
+        "cpu_seconds": 2.16,
+        "cpu_seconds_delta": 0.11,
+        "process_count": 13,
+        "rss_bytes": 1085714432,
+        "scope": "all Chromium processes whose command line has this disposable --user-data-dir"
+      },
+      "protocol_tokens": {
+        "request_tokens": 601,
+        "response_tokens": 354,
+        "total_tokens": 955
+      },
+      "run": 2,
+      "sequence_ms": 289.391,
+      "status": "pass",
+      "steps": [
+        {
+          "ms": 21.412,
+          "operation": "navigate",
+          "protocol": [
+            {
+              "method": "Page.navigate",
+              "request": {
+                "id": 0,
+                "method": "Page.navigate",
+                "params": {
+                  "url": "http://127.0.0.1:<PORT>/"
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Page.navigate\",\"params\":{\"url\":\"http://127.0.0.1:00000/\"}}",
+              "request_tokens": 28,
+              "response": {
+                "id": 0,
+                "result": {
+                  "frameId": "<CDP_IDENTIFIER>",
+                  "isDownload": false,
+                  "loaderId": "<CDP_IDENTIFIER>"
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"frameId\":\"455B49CAD70467A2F2C3337E6088333A\",\"isDownload\":false,\"loaderId\":\"CB8654A060795D712A3701F7BEBFC690\"}}",
+              "response_tokens": 55,
+              "total_tokens": 83
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 28,
+            "response_tokens": 55,
+            "total_tokens": 83
+          }
+        },
+        {
+          "ms": 0.411,
+          "operation": "read_h1",
+          "protocol": [
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "expression": "document.querySelector('h1').innerText",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"expression\":\"document.querySelector('h1').innerText\",\"returnByValue\":true}}",
+              "request_tokens": 30,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "string",
+                    "value": "Synthetic browser benchmark"
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"string\",\"value\":\"Synthetic browser benchmark\"}}}",
+              "response_tokens": 20,
+              "total_tokens": 50
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 30,
+            "response_tokens": 20,
+            "total_tokens": 50
+          }
+        },
+        {
+          "ms": 1.744,
+          "operation": "type",
+          "protocol": [
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "expression": "document.querySelector('#input').focus()",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"expression\":\"document.querySelector('#input').focus()\",\"returnByValue\":true}}",
+              "request_tokens": 29,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "undefined"
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"undefined\"}}}",
+              "response_tokens": 14,
+              "total_tokens": 43
+            },
+            {
+              "method": "Input.insertText",
+              "request": {
+                "id": 0,
+                "method": "Input.insertText",
+                "params": {
+                  "text": "matched-N"
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Input.insertText\",\"params\":{\"text\":\"matched-N\"}}",
+              "request_tokens": 18,
+              "response": {
+                "id": 0,
+                "result": {}
+              },
+              "response_text": "{\"id\":0,\"result\":{}}",
+              "response_tokens": 9,
+              "total_tokens": 27
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "expression": "document.querySelector('#input').value",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"expression\":\"document.querySelector('#input').value\",\"returnByValue\":true}}",
+              "request_tokens": 28,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "string",
+                    "value": "matched-N"
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"string\",\"value\":\"matched-N\"}}}",
+              "response_tokens": 19,
+              "total_tokens": 47
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 75,
+            "response_tokens": 42,
+            "total_tokens": 117
+          }
+        },
+        {
+          "ms": 0.631,
+          "operation": "click",
+          "protocol": [
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "expression": "document.querySelector('#action').click()",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"expression\":\"document.querySelector('#action').click()\",\"returnByValue\":true}}",
+              "request_tokens": 29,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "undefined"
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"undefined\"}}}",
+              "response_tokens": 14,
+              "total_tokens": 43
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 29,
+            "response_tokens": 14,
+            "total_tokens": 43
+          }
+        },
+        {
+          "ms": 264.173,
+          "operation": "wait_delayed_text",
+          "protocol": [
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": true
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":true}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 396,
+            "response_tokens": 198,
+            "total_tokens": 594
+          }
+        },
+        {
+          "ms": 0.583,
+          "operation": "read_result",
+          "protocol": [
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "expression": "({text: document.querySelector('#result').innerText, hidden: document.querySelector('#result').hidden})",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"expression\":\"({text: document.querySelector('#result').innerText, hidden: document.querySelector('#result').hidden})\",\"returnByValue\":true}}",
+              "request_tokens": 43,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "object",
+                    "value": {
+                      "hidden": false,
+                      "text": "Action complete"
+                    }
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"object\",\"value\":{\"hidden\":false,\"text\":\"Action complete\"}}}}",
+              "response_tokens": 25,
+              "total_tokens": 68
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 43,
+            "response_tokens": 25,
+            "total_tokens": 68
+          }
+        }
+      ]
+    },
+    {
+      "browser_process_scope": {
+        "cpu_seconds": 2.28,
+        "cpu_seconds_delta": 0.12,
+        "process_count": 13,
+        "rss_bytes": 1088913408,
+        "scope": "all Chromium processes whose command line has this disposable --user-data-dir"
+      },
+      "protocol_tokens": {
+        "request_tokens": 601,
+        "response_tokens": 355,
+        "total_tokens": 956
+      },
+      "run": 3,
+      "sequence_ms": 290.81,
+      "status": "pass",
+      "steps": [
+        {
+          "ms": 23.563,
+          "operation": "navigate",
+          "protocol": [
+            {
+              "method": "Page.navigate",
+              "request": {
+                "id": 0,
+                "method": "Page.navigate",
+                "params": {
+                  "url": "http://127.0.0.1:<PORT>/"
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Page.navigate\",\"params\":{\"url\":\"http://127.0.0.1:00000/\"}}",
+              "request_tokens": 28,
+              "response": {
+                "id": 0,
+                "result": {
+                  "frameId": "<CDP_IDENTIFIER>",
+                  "isDownload": false,
+                  "loaderId": "<CDP_IDENTIFIER>"
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"frameId\":\"455B49CAD70467A2F2C3337E6088333A\",\"isDownload\":false,\"loaderId\":\"1265BFFDEA4DAE938E800E2BA679AC9B\"}}",
+              "response_tokens": 56,
+              "total_tokens": 84
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 28,
+            "response_tokens": 56,
+            "total_tokens": 84
+          }
+        },
+        {
+          "ms": 0.519,
+          "operation": "read_h1",
+          "protocol": [
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "expression": "document.querySelector('h1').innerText",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"expression\":\"document.querySelector('h1').innerText\",\"returnByValue\":true}}",
+              "request_tokens": 30,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "string",
+                    "value": "Synthetic browser benchmark"
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"string\",\"value\":\"Synthetic browser benchmark\"}}}",
+              "response_tokens": 20,
+              "total_tokens": 50
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 30,
+            "response_tokens": 20,
+            "total_tokens": 50
+          }
+        },
+        {
+          "ms": 1.719,
+          "operation": "type",
+          "protocol": [
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "expression": "document.querySelector('#input').focus()",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"expression\":\"document.querySelector('#input').focus()\",\"returnByValue\":true}}",
+              "request_tokens": 29,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "undefined"
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"undefined\"}}}",
+              "response_tokens": 14,
+              "total_tokens": 43
+            },
+            {
+              "method": "Input.insertText",
+              "request": {
+                "id": 0,
+                "method": "Input.insertText",
+                "params": {
+                  "text": "matched-N"
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Input.insertText\",\"params\":{\"text\":\"matched-N\"}}",
+              "request_tokens": 18,
+              "response": {
+                "id": 0,
+                "result": {}
+              },
+              "response_text": "{\"id\":0,\"result\":{}}",
+              "response_tokens": 9,
+              "total_tokens": 27
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "expression": "document.querySelector('#input').value",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"expression\":\"document.querySelector('#input').value\",\"returnByValue\":true}}",
+              "request_tokens": 28,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "string",
+                    "value": "matched-N"
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"string\",\"value\":\"matched-N\"}}}",
+              "response_tokens": 19,
+              "total_tokens": 47
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 75,
+            "response_tokens": 42,
+            "total_tokens": 117
+          }
+        },
+        {
+          "ms": 0.543,
+          "operation": "click",
+          "protocol": [
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "expression": "document.querySelector('#action').click()",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"expression\":\"document.querySelector('#action').click()\",\"returnByValue\":true}}",
+              "request_tokens": 29,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "undefined"
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"undefined\"}}}",
+              "response_tokens": 14,
+              "total_tokens": 43
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 29,
+            "response_tokens": 14,
+            "total_tokens": 43
+          }
+        },
+        {
+          "ms": 263.685,
+          "operation": "wait_delayed_text",
+          "protocol": [
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": true
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":true}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 396,
+            "response_tokens": 198,
+            "total_tokens": 594
+          }
+        },
+        {
+          "ms": 0.466,
+          "operation": "read_result",
+          "protocol": [
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "expression": "({text: document.querySelector('#result').innerText, hidden: document.querySelector('#result').hidden})",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"expression\":\"({text: document.querySelector('#result').innerText, hidden: document.querySelector('#result').hidden})\",\"returnByValue\":true}}",
+              "request_tokens": 43,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "object",
+                    "value": {
+                      "hidden": false,
+                      "text": "Action complete"
+                    }
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"object\",\"value\":{\"hidden\":false,\"text\":\"Action complete\"}}}}",
+              "response_tokens": 25,
+              "total_tokens": 68
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 43,
+            "response_tokens": 25,
+            "total_tokens": 68
+          }
+        }
+      ]
+    },
+    {
+      "browser_process_scope": {
+        "cpu_seconds": 2.4,
+        "cpu_seconds_delta": 0.12,
+        "process_count": 13,
+        "rss_bytes": 1090539520,
+        "scope": "all Chromium processes whose command line has this disposable --user-data-dir"
+      },
+      "protocol_tokens": {
+        "request_tokens": 601,
+        "response_tokens": 357,
+        "total_tokens": 958
+      },
+      "run": 4,
+      "sequence_ms": 287.308,
+      "status": "pass",
+      "steps": [
+        {
+          "ms": 22.202,
+          "operation": "navigate",
+          "protocol": [
+            {
+              "method": "Page.navigate",
+              "request": {
+                "id": 0,
+                "method": "Page.navigate",
+                "params": {
+                  "url": "http://127.0.0.1:<PORT>/"
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Page.navigate\",\"params\":{\"url\":\"http://127.0.0.1:00000/\"}}",
+              "request_tokens": 28,
+              "response": {
+                "id": 0,
+                "result": {
+                  "frameId": "<CDP_IDENTIFIER>",
+                  "isDownload": false,
+                  "loaderId": "<CDP_IDENTIFIER>"
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"frameId\":\"455B49CAD70467A2F2C3337E6088333A\",\"isDownload\":false,\"loaderId\":\"3CB73A0B5ED631B0DB74D6A2FA003001\"}}",
+              "response_tokens": 58,
+              "total_tokens": 86
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 28,
+            "response_tokens": 58,
+            "total_tokens": 86
+          }
+        },
+        {
+          "ms": 0.482,
+          "operation": "read_h1",
+          "protocol": [
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "expression": "document.querySelector('h1').innerText",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"expression\":\"document.querySelector('h1').innerText\",\"returnByValue\":true}}",
+              "request_tokens": 30,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "string",
+                    "value": "Synthetic browser benchmark"
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"string\",\"value\":\"Synthetic browser benchmark\"}}}",
+              "response_tokens": 20,
+              "total_tokens": 50
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 30,
+            "response_tokens": 20,
+            "total_tokens": 50
+          }
+        },
+        {
+          "ms": 1.596,
+          "operation": "type",
+          "protocol": [
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "expression": "document.querySelector('#input').focus()",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"expression\":\"document.querySelector('#input').focus()\",\"returnByValue\":true}}",
+              "request_tokens": 29,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "undefined"
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"undefined\"}}}",
+              "response_tokens": 14,
+              "total_tokens": 43
+            },
+            {
+              "method": "Input.insertText",
+              "request": {
+                "id": 0,
+                "method": "Input.insertText",
+                "params": {
+                  "text": "matched-N"
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Input.insertText\",\"params\":{\"text\":\"matched-N\"}}",
+              "request_tokens": 18,
+              "response": {
+                "id": 0,
+                "result": {}
+              },
+              "response_text": "{\"id\":0,\"result\":{}}",
+              "response_tokens": 9,
+              "total_tokens": 27
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "expression": "document.querySelector('#input').value",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"expression\":\"document.querySelector('#input').value\",\"returnByValue\":true}}",
+              "request_tokens": 28,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "string",
+                    "value": "matched-N"
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"string\",\"value\":\"matched-N\"}}}",
+              "response_tokens": 19,
+              "total_tokens": 47
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 75,
+            "response_tokens": 42,
+            "total_tokens": 117
+          }
+        },
+        {
+          "ms": 0.438,
+          "operation": "click",
+          "protocol": [
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "expression": "document.querySelector('#action').click()",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"expression\":\"document.querySelector('#action').click()\",\"returnByValue\":true}}",
+              "request_tokens": 29,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "undefined"
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"undefined\"}}}",
+              "response_tokens": 14,
+              "total_tokens": 43
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 29,
+            "response_tokens": 14,
+            "total_tokens": 43
+          }
+        },
+        {
+          "ms": 261.626,
+          "operation": "wait_delayed_text",
+          "protocol": [
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": true
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":true}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 396,
+            "response_tokens": 198,
+            "total_tokens": 594
+          }
+        },
+        {
+          "ms": 0.654,
+          "operation": "read_result",
+          "protocol": [
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "expression": "({text: document.querySelector('#result').innerText, hidden: document.querySelector('#result').hidden})",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"expression\":\"({text: document.querySelector('#result').innerText, hidden: document.querySelector('#result').hidden})\",\"returnByValue\":true}}",
+              "request_tokens": 43,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "object",
+                    "value": {
+                      "hidden": false,
+                      "text": "Action complete"
+                    }
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"object\",\"value\":{\"hidden\":false,\"text\":\"Action complete\"}}}}",
+              "response_tokens": 25,
+              "total_tokens": 68
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 43,
+            "response_tokens": 25,
+            "total_tokens": 68
+          }
+        }
+      ]
+    },
+    {
+      "browser_process_scope": {
+        "cpu_seconds": 2.55,
+        "cpu_seconds_delta": 0.15,
+        "process_count": 13,
+        "rss_bytes": 1093283840,
+        "scope": "all Chromium processes whose command line has this disposable --user-data-dir"
+      },
+      "protocol_tokens": {
+        "request_tokens": 601,
+        "response_tokens": 357,
+        "total_tokens": 958
+      },
+      "run": 5,
+      "sequence_ms": 291.558,
+      "status": "pass",
+      "steps": [
+        {
+          "ms": 22.197,
+          "operation": "navigate",
+          "protocol": [
+            {
+              "method": "Page.navigate",
+              "request": {
+                "id": 0,
+                "method": "Page.navigate",
+                "params": {
+                  "url": "http://127.0.0.1:<PORT>/"
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Page.navigate\",\"params\":{\"url\":\"http://127.0.0.1:00000/\"}}",
+              "request_tokens": 28,
+              "response": {
+                "id": 0,
+                "result": {
+                  "frameId": "<CDP_IDENTIFIER>",
+                  "isDownload": false,
+                  "loaderId": "<CDP_IDENTIFIER>"
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"frameId\":\"455B49CAD70467A2F2C3337E6088333A\",\"isDownload\":false,\"loaderId\":\"736CD4D41B4E137CDC6A78F0F2EC0730\"}}",
+              "response_tokens": 58,
+              "total_tokens": 86
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 28,
+            "response_tokens": 58,
+            "total_tokens": 86
+          }
+        },
+        {
+          "ms": 3.192,
+          "operation": "read_h1",
+          "protocol": [
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "expression": "document.querySelector('h1').innerText",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"expression\":\"document.querySelector('h1').innerText\",\"returnByValue\":true}}",
+              "request_tokens": 30,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "string",
+                    "value": "Synthetic browser benchmark"
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"string\",\"value\":\"Synthetic browser benchmark\"}}}",
+              "response_tokens": 20,
+              "total_tokens": 50
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 30,
+            "response_tokens": 20,
+            "total_tokens": 50
+          }
+        },
+        {
+          "ms": 2.81,
+          "operation": "type",
+          "protocol": [
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "expression": "document.querySelector('#input').focus()",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"expression\":\"document.querySelector('#input').focus()\",\"returnByValue\":true}}",
+              "request_tokens": 29,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "undefined"
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"undefined\"}}}",
+              "response_tokens": 14,
+              "total_tokens": 43
+            },
+            {
+              "method": "Input.insertText",
+              "request": {
+                "id": 0,
+                "method": "Input.insertText",
+                "params": {
+                  "text": "matched-N"
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Input.insertText\",\"params\":{\"text\":\"matched-N\"}}",
+              "request_tokens": 18,
+              "response": {
+                "id": 0,
+                "result": {}
+              },
+              "response_text": "{\"id\":0,\"result\":{}}",
+              "response_tokens": 9,
+              "total_tokens": 27
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "expression": "document.querySelector('#input').value",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"expression\":\"document.querySelector('#input').value\",\"returnByValue\":true}}",
+              "request_tokens": 28,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "string",
+                    "value": "matched-N"
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"string\",\"value\":\"matched-N\"}}}",
+              "response_tokens": 19,
+              "total_tokens": 47
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 75,
+            "response_tokens": 42,
+            "total_tokens": 117
+          }
+        },
+        {
+          "ms": 0.413,
+          "operation": "click",
+          "protocol": [
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "expression": "document.querySelector('#action').click()",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"expression\":\"document.querySelector('#action').click()\",\"returnByValue\":true}}",
+              "request_tokens": 29,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "undefined"
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"undefined\"}}}",
+              "response_tokens": 14,
+              "total_tokens": 43
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 29,
+            "response_tokens": 14,
+            "total_tokens": 43
+          }
+        },
+        {
+          "ms": 261.895,
+          "operation": "wait_delayed_text",
+          "protocol": [
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":false}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "awaitPromise": true,
+                  "expression": "document.body.innerText.includes(\"Delayed state ready\")",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"awaitPromise\":true,\"expression\":\"document.body.innerText.includes(\\\"Delayed state ready\\\")\",\"returnByValue\":true}}",
+              "request_tokens": 36,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "boolean",
+                    "value": true
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"boolean\",\"value\":true}}}",
+              "response_tokens": 18,
+              "total_tokens": 54
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 396,
+            "response_tokens": 198,
+            "total_tokens": 594
+          }
+        },
+        {
+          "ms": 0.656,
+          "operation": "read_result",
+          "protocol": [
+            {
+              "method": "Runtime.evaluate",
+              "request": {
+                "id": 0,
+                "method": "Runtime.evaluate",
+                "params": {
+                  "expression": "({text: document.querySelector('#result').innerText, hidden: document.querySelector('#result').hidden})",
+                  "returnByValue": true
+                }
+              },
+              "request_text": "{\"id\":0,\"method\":\"Runtime.evaluate\",\"params\":{\"expression\":\"({text: document.querySelector('#result').innerText, hidden: document.querySelector('#result').hidden})\",\"returnByValue\":true}}",
+              "request_tokens": 43,
+              "response": {
+                "id": 0,
+                "result": {
+                  "result": {
+                    "type": "object",
+                    "value": {
+                      "hidden": false,
+                      "text": "Action complete"
+                    }
+                  }
+                }
+              },
+              "response_text": "{\"id\":0,\"result\":{\"result\":{\"type\":\"object\",\"value\":{\"hidden\":false,\"text\":\"Action complete\"}}}}",
+              "response_tokens": 25,
+              "total_tokens": 68
+            }
+          ],
+          "protocol_tokens": {
+            "request_tokens": 43,
+            "response_tokens": 25,
+            "total_tokens": 68
+          }
+        }
+      ]
+    }
+  ],
+  "schema": "direct-cdp-matched-browser-primitives/v1",
+  "setup": {
+    "event_subscription": "Page.enable; Page.loadEventFired is consumed only to establish navigation completion",
+    "protocol": [
+      {
+        "method": "Target.createTarget",
+        "request": {
+          "id": 0,
+          "method": "Target.createTarget",
+          "params": {
+            "url": "about:blank"
+          }
+        },
+        "request_text": "{\"id\":0,\"method\":\"Target.createTarget\",\"params\":{\"url\":\"about:blank\"}}",
+        "request_tokens": 19,
+        "response": {
+          "id": 0,
+          "result": {
+            "targetId": "<CDP_IDENTIFIER>"
+          }
+        },
+        "response_text": "{\"id\":0,\"result\":{\"targetId\":\"455B49CAD70467A2F2C3337E6088333A\"}}",
+        "response_tokens": 29,
+        "total_tokens": 48
+      },
+      {
+        "method": "Page.enable",
+        "request": {
+          "id": 0,
+          "method": "Page.enable"
+        },
+        "request_text": "{\"id\":0,\"method\":\"Page.enable\"}",
+        "request_tokens": 10,
+        "response": {
+          "id": 0,
+          "result": {}
+        },
+        "response_text": "{\"id\":0,\"result\":{}}",
+        "response_tokens": 9,
+        "total_tokens": 19
+      }
+    ],
+    "protocol_tokens": {
+      "request_tokens": 29,
+      "response_tokens": 38,
+      "total_tokens": 67
+    }
+  },
+  "startup_ms": 796.38,
+  "status": "pass",
+  "token_method": {
+    "encoding": "o200k_base",
+    "excluded": [
+      "model prompts and reasoning",
+      "WebSocket handshake/framing",
+      "browser events not used as operation responses"
+    ],
+    "interpretation": "a low-level CDP transport baseline; it has no default agent-context or model-billing meaning",
+    "protocol_scope": "actual serialized compact JSON CDP requests and responses recorded below"
+  },
+  "transport": {
+    "client": "websockets.sync.client transport; no Playwright/Selenium/CDP client library",
+    "protocol": "Chrome DevTools Protocol over direct RFC 6455 WebSocket"
+  }
+}

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Sleeper idle icon">
+  <rect width="256" height="256" rx="56" fill="#C4512A"/>
+  <!-- A single shallow closed eyelid and three relaxed downward lashes. -->
+  <path d="M67 120c30 27 92 27 122 0" fill="none" stroke="#FFF4DF" stroke-width="13" stroke-linecap="round"/>
+  <path d="M92 138l-7 17M128 146v18M164 138l7 17" fill="none" stroke="#FFF4DF" stroke-width="9" stroke-linecap="round"/>
+</svg>

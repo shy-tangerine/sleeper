@@ -1,0 +1,51 @@
+{
+  "manifest_version": 3,
+  "name": "Sleeper",
+  "version": "2.0.1",
+  "description": "DOM bridge for computer-use: routes daemon commands to the active tab's content script.",
+  "permissions": [
+    "tabs",
+    "activeTab",
+    "storage",
+    "webRequest",
+    "scripting",
+    "debugger",
+    "downloads"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "action": {
+    "default_title": "Sleeper controls",
+    "default_popup": "popup.html"
+  },
+  "options_page": "options.html",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "locators.js",
+        "action-labels.js",
+        "activity.js",
+        "sleeper.js",
+        "tailscale_setup.js",
+        "dynamic_code.js",
+        "content.js"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "icons": {
+    "16": "icon16.png",
+    "32": "icon32.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}

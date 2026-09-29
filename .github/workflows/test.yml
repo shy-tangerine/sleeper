@@ -1,0 +1,34 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    # Manual branch tests require an explicit dispatch by the repository owner.
+    if: github.actor == github.repository_owner
+    runs-on: [self-hosted, Linux, X64, sleeper-ci]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          enable-cache: true
+          python-version: "3.12"
+      - run: uv sync --frozen
+      - name: Verify the launch gate and a sanitized public export
+        run: |
+          uv run --no-project --python 3.12 python scripts/check_launch_gate.py --verify
+          uv run --no-project --python 3.12 python scripts/check_launch_gate.py --export "$RUNNER_TEMP/public-export"
+          uv run --no-project --python 3.12 python scripts/check_launch_gate.py --check "$RUNNER_TEMP/public-export"
+      - run: uv run bash test/run.sh
+      - run: uv run pytest -q test

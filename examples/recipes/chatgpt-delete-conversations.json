@@ -1,0 +1,22 @@
+{
+  "name": "chatgpt-delete-conversations",
+  "description": "Bulk-delete all ChatGPT conversations via the backend API",
+  "steps": [
+    {
+      "cmd": "api",
+      "args": {
+        "url": "/backend-api/conversations?offset=0&limit=100&order=updated",
+        "method": "GET"
+      },
+      "extract": ".items[].id"
+    },
+    {
+      "cmd": "api",
+      "args": {
+        "url": "/backend-api/conversation/id/{id}",
+        "method": "DELETE"
+      },
+      "for_each": "@extract"
+    }
+  ]
+}

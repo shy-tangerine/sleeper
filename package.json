@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "devDependencies": {
+    "web-ext": "8.10.0"
+  }
+}

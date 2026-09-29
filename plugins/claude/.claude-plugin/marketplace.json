@@ -1,0 +1,12 @@
+{
+  "name": "sleeper",
+  "owner": {
+    "name": "Shy Tangerine"
+  },
+  "plugins": [
+    {
+      "name": "sleeper",
+      "source": "./sleeper"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "product-listing",
+  "description": "Generic e-commerce search results (Mercado Livre-style): product titles, prices, and result links. No fixed URL — point it at any search results page with --url or run it on an existing tab.",
+  "url": "",
+  "selector": "",
+  "fields": {
+    "titles": {
+      "sel": "h3",
+      "get": "text"
+    },
+    "prices": {
+      "sel": ".andes-money-amount__fraction",
+      "get": "text"
+    },
+    "links": {
+      "sel": "a",
+      "get": "href"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "sleeper-local",
+  "interface": {
+    "displayName": "Sleeper"
+  },
+  "plugins": [
+    {
+      "name": "sleeper",
+      "source": {
+        "source": "local",
+        "path": "./plugins/codex/sleeper"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

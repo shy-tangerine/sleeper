@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sleeper-cli"
+version = "2.0.1"
+description = "Browser automation bridge for AI agents"
+readme = "README.md"
+authors = [{ name = "Shy Tangerine" }]
+license = "MIT"
+requires-python = ">=3.11"
+dependencies = [
+  "detect-secrets==1.5.0",
+  "qrcode==8.2",
+  "websockets==16.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/shy-tangerine/Sleeper"
+Repository = "https://github.com/shy-tangerine/Sleeper"
+
+[project.scripts]
+sleeper = "cli.sleeper:main"
+sleeper-daemon = "daemon.daemon:run"
+sleeper-mcp = "daemon.mcp_server:main"
+
+[dependency-groups]
+dev = [
+  "pytest==8.3.5",
+  "tiktoken==0.13.0",
+]
+benchmark = [
+  "playwright>=1.55,<2",
+  "psutil>=7,<8",
+]
+
+[tool.uv]
+package = true
+
+[tool.setuptools.packages.find]
+include = ["cli", "daemon"]
+namespaces = false

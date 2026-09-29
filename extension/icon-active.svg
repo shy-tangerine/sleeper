@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Sleeper active icon">
+  <rect width="256" height="256" rx="56" fill="#C4512A"/>
+  <!-- Wide almond eye with a simple round pupil. -->
+  <path d="M54 128c31-43 117-43 148 0-31 43-117 43-148 0Z" fill="#FFF4DF"/>
+  <circle cx="128" cy="128" r="23" fill="#C4512A"/>
+</svg>
