@@ -20,7 +20,21 @@ desktop or Android phone. Sleeper connects Firefox or Chromium through MCP or
 CLI to navigate websites, read pages, fill forms, take screenshots, and extract
 structured data without copying session credentials into agent configuration.
 
-[Install](#install) · [Features](#features) · [Commands](docs/commands.md) · [Agent setup](docs/agent-skill.md) · [Privacy](PRIVACY.md) · [Security](SECURITY.md) · [Benchmarks](#benchmarks) · [Contribute](#contribute)
+[Features](#features) · [Install](#install) · [Commands](docs/commands.md) · [Agent setup](docs/agent-skill.md) · [Privacy](PRIVACY.md) · [Security](SECURITY.md) · [Benchmarks](#benchmarks) · [Contribute](#contribute)
+
+## Features
+
+- 📱 **Firefox for Android (beta):** Run Sleeper on Android through a private Tailscale Serve connection to your desktop daemon. No Caddy, router port, or public listener is required.
+- 🖥️ **Firefox + Chromium desktop:** Control pages in an existing browser session through the extension. Linux and macOS are supported; Windows is best-effort.
+- 🗂️ **Profiles and tabs:** Each browser installation has its own persistent ID. Agents discover connected browsers and target the intended tab.
+- 🎯 **Element targeting:** Find controls by CSS selector, accessible role and name, or a reference returned by `snapshot`.
+- 📝 **Page interaction:** Fill inputs, press keys, click controls, and wait for selectors or text before the next action.
+- 📋 **Structured extraction:** Read one element, collect matching elements, or extract a JSON map. Save repeatable work as recipes and schemas.
+- 📸 **Screenshots:** Capture the viewport or full page, with optional annotations. PNG output has a size limit; [capture options](docs/commands.md#use-the-cli) explain it.
+- 🌐 **Network and APIs:** Inspect captured requests and call allowed HTTPS APIs with credentials kept in the browser and bound to their source host.
+- 🔒 **Secret masking:** Structured results receive best-effort redaction before reaching the CLI or MCP client. Screenshots can still contain private information.
+- 🔌 **CLI and MCP:** Run shell commands or call MCP tools through the local daemon.
+- 📖 **Included skill:** Give agents instructions for session selection, action verification, and connection recovery.
 
 ## Install
 
@@ -72,7 +86,7 @@ claude plugin install sleeper@sleeper --scope user
 ```
 
 <details>
-<summary>Install the agent plugin from public GitHub after launch</summary>
+<summary>Install the agent plugin from public GitHub</summary>
 
 ```bash
 # Codex
@@ -100,7 +114,7 @@ Browser permission approval is required once. [Installation, updates, and remova
 Prefer manual client setup? Use the verified [Codex and Claude Code plugin commands](docs/agent-skill.md#native-plugins).
 
 <details>
-<summary>Install from GitHub after the public launch</summary>
+<summary>Install from GitHub</summary>
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/shy-tangerine/Sleeper/main/install.sh | bash
@@ -125,20 +139,6 @@ The included [agent skill](skills/sleeper/SKILL.md) covers session selection, ac
 | Waiting | Working |
 |:---:|:---:|
 | <img src="extension/icon.svg" width="48" alt="Sleeper with a closed eye"> | <img src="extension/icon-active.svg" width="48" alt="Sleeper with an open eye"> |
-
-## Features
-
-- 📱 **Firefox for Android (beta):** Run Sleeper on Android through a private Tailscale Serve connection to your desktop daemon. No Caddy, router port, or public listener is required.
-- 🖥️ **Firefox + Chromium desktop:** Control pages in an existing browser session through the extension. Linux and macOS are supported; Windows is best-effort.
-- 🗂️ **Profiles and tabs:** Each browser installation has its own persistent ID. Agents discover connected browsers and target the intended tab.
-- 🎯 **Element targeting:** Find controls by CSS selector, accessible role and name, or a reference returned by `snapshot`.
-- 📝 **Page interaction:** Fill inputs, press keys, click controls, and wait for selectors or text before the next action.
-- 📋 **Structured extraction:** Read one element, collect matching elements, or extract a JSON map. Save repeatable work as recipes and schemas.
-- 📸 **Screenshots:** Capture the viewport or full page, with optional annotations. PNG output has a size limit; [capture options](docs/commands.md#use-the-cli) explain it.
-- 🌐 **Network and APIs:** Inspect captured requests and call allowed HTTPS APIs with credentials kept in the browser and bound to their source host.
-- 🔒 **Secret masking:** Structured results receive best-effort redaction before reaching the CLI or MCP client. Screenshots can still contain private information.
-- 🔌 **CLI and MCP:** Run shell commands or call MCP tools through the local daemon.
-- 📖 **Included skill:** Give agents instructions for session selection, action verification, and connection recovery.
 
 
 
@@ -188,10 +188,6 @@ The Chrome check used Google Chrome for Testing, the automation distribution of 
 
 [Build and test](docs/installation.md#development) · [Changelog](CHANGELOG.md) · [Third-party notices](THIRD_PARTY_NOTICES.md) · [Privacy](PRIVACY.md) · [Security](SECURITY.md) · [MIT license](LICENSE) · [Sponsorship](docs/SPONSORS.md)
 
-The staging checkout remains private until its reviewed source is exported
-without Git history. See the [public release boundary](docs/publication.md)
-for the fail-closed export and independent validation procedure.
-
 <details>
 <summary>Repository layout</summary>
 
@@ -208,7 +204,7 @@ for the fail-closed export and independent validation procedure.
 
 ## Star history
 
-[View the star-history chart](https://www.star-history.com/#shy-tangerine/Sleeper&Date) once the public repository launches.
+[View the star-history chart](https://www.star-history.com/#shy-tangerine/Sleeper&Date)
 
 ## Python package build (PyPI)
 
