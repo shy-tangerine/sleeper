@@ -39,4 +39,68 @@ registry.refresh();
 assert.strictEqual(registry.entries.has(47), false, "stale tabs are eventually pruned");
 
 assert.throws(() => registry.resolve(2), /tab not found at position 2/);
+// Issue #17: browser indices restart in each window, but numeric selectors
+// address the whole inventory. Include the reported position and tab IDs.
+queriedTabs = [
+  ...Array.from({ length: 2 }, (_, index) => ({ id: 200 + index, windowId: 1, index })),
+  ...Array.from({ length: 31 }, (_, index) => ({
+    id: index === 29 ? 135 : index === 30 ? 136 : 300 + index,
+    windowId: 2, index, url: `https://example.test/${index}`,
+  })),
+];
+for (let miss = 0; miss < 6; miss++) registry.refresh();
+function assertListedSelectors() {
+  registry.snapshot().forEach((entry, position) => {
+    assert.strictEqual(entry.index, position, "listed indices are global positions");
+    assert.strictEqual(registry.resolve(entry.index), entry.tabId);
+    assert.strictEqual(registry.resolve(String(entry.index)), entry.tabId);
+  });
+  registry.snapshot().forEach(entry => {
+    assert.strictEqual(entry.windowIndex, queriedTabs.find(tab => tab.id === entry.tabId).index);
+  });
+}
+assertListedSelectors();
+assert.strictEqual(registry.snapshot().find(tab => tab.tabId === 135).index, 31);
+assert.throws(() => registry.resolve(0.5), /tab not found at position/);
+assert.throws(() => registry.resolve(-1), /tab not found at position/);
+assert.throws(() => registry.resolve(33), /tab not found at position/);
+
+// Exercise the actual lifecycle handler with mocked browser APIs only.
+const background = fs.readFileSync(require("path").join(__dirname, "..", "extension", "background.js"), "utf8");
+const handler = background.slice(background.indexOf("function handleTabLifecycleCommand("), background.indexOf("// G1: open a fresh tab"));
+const removed = [], selected = [], results = [], errors = [];
+context.resolveTabId = registry.resolve;
+context.TAB_REGISTRY = registry.entries;
+context.refreshRegistry = registry.refresh;
+context.sendResult = (_id, result) => results.push(result);
+context.sendError = (_id, error) => errors.push(error);
+chromeApi.tabs.update = (id, _options, callback) => { selected.push(id); callback({ url: "https://example.test" }); };
+chromeApi.tabs.remove = (id, callback) => {
+  removed.push(id);
+  const closed = queriedTabs.find(tab => tab.id === id);
+  queriedTabs = queriedTabs.filter(tab => tab.id !== id).map(tab => ({
+    ...tab, index: tab.windowId === closed.windowId && tab.index > closed.index ? tab.index - 1 : tab.index,
+  }));
+  callback();
+};
+vm.runInNewContext(handler, context);
+let target = registry.snapshot().find(tab => tab.tabId === 135);
+context.handleTabLifecycleCommand({ id: 1, cmd: "selecttab", args: { target: String(target.index) } });
+assert.deepStrictEqual(selected, [135]);
+context.handleTabLifecycleCommand({ id: 2, cmd: "closetab", args: { target: target.index } });
+assert.deepStrictEqual(removed, [135], "closes exactly the tab shown at the supplied index");
+assert.strictEqual(results[1].closed, 135);
+assertListedSelectors();
+target = registry.snapshot().find(tab => tab.tabId === 136);
+context.handleTabLifecycleCommand({ id: 3, cmd: "closetab", args: { tab: String(target.index) } });
+assert.deepStrictEqual(removed, [135, 136], "fresh listing remains correct after a close");
+assertListedSelectors();
+context.handleTabLifecycleCommand({ id: 4, cmd: "closetab", args: { target: 1000 } });
+assert.strictEqual(errors.length, 1);
+assert.deepStrictEqual(removed, [135, 136], "invalid selectors never remove tabs");
+queriedTabs.reverse();
+queriedTabs.filter(tab => tab.windowId === 2).forEach((tab, index) => { tab.index = index; });
+registry.refresh();
+assertListedSelectors();
+assert.strictEqual(registry.resolve("example.test/28"), 328, "URL selectors remain unchanged");
 console.log("background tab registry tests passed");

@@ -62,10 +62,15 @@
       if (entry) entry.connected = false;
     }
 
-    function snapshot() {
+    function orderedEntries() {
       return Array.from(entries.values())
-        .map(({ misses, ...rest }) => rest)
         .sort((left, right) => (left.windowId - right.windowId) || (left.index - right.index));
+    }
+
+    function snapshot() {
+      return orderedEntries().map(({ misses, index: windowIndex, ...rest }, index) => ({
+        ...rest, index, windowIndex,
+      }));
     }
 
     function resolve(tab) {
@@ -88,10 +93,8 @@
       }
       if (typeof tab === "string" && /^\d+$/.test(tab)) tab = Number(tab);
       if (typeof tab === "number") {
-        const ordered = all.slice().sort(
-          (left, right) => (left.windowId - right.windowId) || (left.index - right.index),
-        );
-        if (tab >= 0 && tab < ordered.length) return ordered[tab].tabId;
+        const ordered = orderedEntries();
+        if (Number.isInteger(tab) && tab >= 0 && tab < ordered.length) return ordered[tab].tabId;
         fail("tab not found at position " + tab + " (" + ordered.length + " tabs)", tab);
       }
       if (typeof tab === "string" && tab.length > 0) {
