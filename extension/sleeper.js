@@ -756,11 +756,11 @@ const handlers = {
     const el = semanticTarget(args, "type");
     el.focus();
     if (typeof SleeperActivity !== "undefined") SleeperActivity.typing(el);
-    if (args.clear) setNativeValue(el, "");
-    const text = String(args.text);
-    if (args.stealth) {
-      // character-by-character with key events — closer to human typing
       if (args.clear) setNativeValue(el, "");
+      const text = String(args.text);
+      const expectedValue = args.stealth ? String(el.value || "") + text : text;
+      if (args.stealth) {
+      // character-by-character with key events — closer to human typing
       for (const ch of text) {
         const opts = { key: ch, bubbles: true, cancelable: true };
         el.dispatchEvent(new KeyboardEvent("keydown", opts));
@@ -772,7 +772,7 @@ const handlers = {
         setNativeValue(el, text);
       }
       await new Promise((resolve) => setTimeout(resolve, 0));
-      if (String(el.value || "") !== text) {
+        if (String(el.value || "") !== expectedValue) {
         throw new Error("type: target rejected the value after input events");
       }
       return { typed: text, tag: el.tagName.toLowerCase(), stealth: !!args.stealth };
