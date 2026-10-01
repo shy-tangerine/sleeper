@@ -88,11 +88,13 @@ Arbitrary JavaScript through `exec` and JavaScript-string predicates through
 `wait_until` are Chromium-only. Firefox returns an explicit unsupported-command
 error; all structured browser controls remain available.
 
-DOM commands that support `--tab` accept an index or URL substring. Prefer an exact, unambiguous target when several tabs share a host. Screenshots are returned as PNG data URLs in a JSON response, capped at 3.75 MiB of encoded image data. Larger captures return an error; reduce the viewport or capture the visible area. See the security and browser limitations below.
+Numeric tab selectors (including `tab close`, `tab select`, and `--tab`) use the zero-based `index` shown by `tab list`, ordered by window and then tab position. `windowIndex` is the browser’s position within its window; `tabId` is browser metadata, not a numeric selector. Re-list after tabs move, open, or close before using another positional selector. DOM commands that support `--tab` accept this index or a URL substring. Prefer an exact, unambiguous target when several tabs share a host. Screenshots are returned as PNG data URLs in a JSON response, capped at 3.75 MiB of encoded image data. Larger captures return an error; reduce the viewport or capture the visible area. See the security and browser limitations below.
 
 [OpenCLI compatibility](OPENCLI-PARITY.md) lists aliases and platform differences. `analyze` inspects URL strings; it does not crawl or prove a site's automation compatibility. `adapter init NAME` creates a local adapter scaffold and `adapter verify NAME` checks it.
 
 ### Browser profiles
+
+Structured results use best-effort secret redaction. This can replace legitimate long URLs or class names with `[REDACTED]`, including values returned by `find` or `read_all --attr href`. A redacted string is incomplete data; do not use it as a URL or selector. Screenshots can still contain private information.
 
 Each extension installation receives a persistent ID automatically. With one connected browser, commands need no routing configuration. With several, use `sleeper sessions` to discover IDs and choose the intended browser:
 
