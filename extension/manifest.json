@@ -8,6 +8,7 @@
     "storage",
     "nativeMessaging",
     "webRequest",
+    "downloads",
     "ws://127.0.0.1:8789/*",
     "<all_urls>"
   ],

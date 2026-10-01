@@ -15,7 +15,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote
 from urllib.request import Request, urlopen
 
-COMMAND_ALIASES = {"eval": "exec", "fill": "fillForm", "fill_form": "fillForm", "screenshot": "shot", "find_text": "findText", "click_all": "clickAll", "click_text": "clickText", "read_all": "readAll", "select": "selectOption", "scroll_until": "scrollUntil", "wait": "waitFor", "wait_text": "waitText", "wait_until": "waitUntil", "wait_xhr": "waitXhr", "wait_dialog": "waitDialog"}
+COMMAND_ALIASES = {"eval": "exec", "fill": "fillForm", "fill_form": "fillForm", "screenshot": "shot", "find_text": "findText", "click_all": "clickAll", "click_text": "clickText", "read_all": "readAll", "select": "selectOption", "scroll_until": "scrollUntil", "wait": "waitFor", "wait_text": "waitText", "wait_until": "waitUntil", "wait_xhr": "waitXhr", "wait_dialog": "waitDialog", "wait_download": "waitDownload"}
 TAB_COMMANDS = {"list": "tabs", "new": "newtab", "select": "selecttab", "close": "closetab"}
 POSITIONAL_FIELDS = {
     "batch": ("actions",),
@@ -269,6 +269,12 @@ def _apply_command_defaults(payload: dict, command: str) -> None:
     15s, batch requires a JSON array and only puts stop_on_error on the wire
     when explicitly requested so old transports stay byte compatible.
     """
+    if command in {"read", "readAll"}:
+        for mode in ("html", "value"):
+            if payload["args"].pop(mode, False):
+                payload["args"]["what"] = mode
+        if "attr" in payload["args"]:
+            payload["args"]["what"] = "attr"
     if command == "waitUntil" and isinstance(payload["args"].get("predicate"), dict):
         payload["args"]["condition"] = payload["args"].pop("predicate")
     if command == "find" and "limit" not in payload["args"]:
