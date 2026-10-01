@@ -14,7 +14,7 @@ def test_native_plugin_generation_and_skill_parity():
     validator = os.environ.get("CODEX_PLUGIN_VALIDATOR")
     if validator and Path(validator).is_file():
         subprocess.run(["python3", validator, str(ROOT / "plugins/codex/sleeper")], cwd=ROOT, check=True)
-    canonical = (ROOT / "skills/sleeper/SKILL.md").read_bytes()
+    canonical = (ROOT / "plugins/codex/sleeper/skills/sleeper/SKILL.md").read_bytes()
     for client, manifest_dir in (("claude", ".claude-plugin"), ("codex", ".codex-plugin")):
         target = ROOT / "plugins" / client / "sleeper"
         assert json.loads((target / manifest_dir / "plugin.json").read_text())["name"] == "sleeper"

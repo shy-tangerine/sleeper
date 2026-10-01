@@ -24,9 +24,8 @@ assert.match(optionsJs, /location\.hash\s*===\s*["']#log["']/, "the #log target 
 assert.match(optionsJs, /duration_ms/, "settings consume enriched action durations");
 assert.match(optionsJs, /status/, "settings consume enriched action outcomes");
 
-assert.match(activityJs, /env\(safe-area-inset-bottom\)/, "page feedback respects the mobile safe area");
-assert.match(activityJs, /STATUS_CUE_MS\s*=\s*[3-9]\d{3}/, "page action feedback remains visible for at least three seconds");
-assert.match(activityJs, /SENSITIVE_ACTIONS/, "page feedback explicitly redacts value-bearing actions");
+assert.match(activityJs, /\.frame\{inset:0;/, "page activity frame covers the viewport without placing text over mobile controls");
+assert.match(activityJs, /aria-hidden/, "decorative page feedback is hidden from assistive technology");
 assert.match(activityJs, /prefers-reduced-motion/, "page feedback respects reduced motion");
 assert.match(activityJs, /visible_activity/, "page feedback respects the activity visibility setting");
 

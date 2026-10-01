@@ -2,8 +2,7 @@
 
 Read the [privacy policy](../PRIVACY.md) before connecting an agent to a
 logged-in browser. Security reports belong in the private channel described
-in [SECURITY.md](../SECURITY.md). Maintainers preparing a public release must
-also follow the [history-free publication boundary](publication.md).
+in [SECURITY.md](../SECURITY.md).
 
 ## One-command setup
 
@@ -96,7 +95,7 @@ sleeper snapshot
 
 For Firefox for Android on another device (beta), use [Tailscale-only Android setup](android.md). The pairing URL configures HTTPS/WSS automatically while the daemon remains loopback-only.
 
-If no tabs appear, use the [connection recovery guide](../skills/sleeper/references/setup.md). The icon's closed eye indicates idle state; the popup supplies connection status.
+If no tabs appear, use the [connection recovery guide](../plugins/codex/sleeper/skills/sleeper/references/setup.md). The icon's closed eye indicates idle state; the popup supplies connection status.
 
 ## Updates and removal
 
@@ -129,7 +128,7 @@ The second command installs the browser runtime and CLI without agent integratio
 
 ## Development
 
-Runtime code is grouped under `extension/`, `daemon/`, and `cli/`. Examples live under `examples/`; the agent skill lives under `skills/`.
+Runtime code is grouped under `extension/`, `daemon/`, and `cli/`. Examples live under `examples/`; the agent skill lives under `plugins/codex/sleeper/skills/`.
 
 Build development browser packages:
 
