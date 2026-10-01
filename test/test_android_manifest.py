@@ -13,6 +13,7 @@ def test_firefox_manifest_declares_android_and_packages_endpoint_module(tmp_path
     assert manifest["browser_specific_settings"]["gecko_android"]["strict_min_version"] == "142.0"
     assert "daemon_endpoint.js" in manifest["background"]["scripts"]
     assert "dynamic_code.js" not in manifest["background"]["scripts"]
+    assert "downloads" in manifest["permissions"]
 
     archive_path = tmp_path / "sleeper-firefox.zip"
     subprocess.run([

@@ -174,6 +174,7 @@ PUBLIC_ALLOWLIST = {
     "benchmarks/results/cdp-matched-results.json",
     "test/test_token_measurement.py",
     "test/test_cli_json_helpers.py",
+    "test/test_cli_observation_payloads.py",
     "benchmarks/results/matched-token-samples.json",
     "benchmarks/results/mcp-discovery-sample.json",
     "benchmarks/results/sleeper-mcp-matched-results.json",
