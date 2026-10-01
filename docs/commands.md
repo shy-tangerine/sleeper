@@ -94,6 +94,8 @@ Numeric tab selectors (including `tab close`, `tab select`, and `--tab`) use the
 
 ### Browser profiles
 
+Structured results use best-effort secret redaction. This can replace legitimate long URLs or class names with `[REDACTED]`, including values returned by `find` or `read_all --attr href`. A redacted string is incomplete data; do not use it as a URL or selector. Screenshots can still contain private information.
+
 Each extension installation receives a persistent ID automatically. With one connected browser, commands need no routing configuration. With several, use `sleeper sessions` to discover IDs and choose the intended browser:
 
 ```bash
