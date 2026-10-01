@@ -7,7 +7,7 @@
 <p align="center">
   <a href="../../docs/agent-skill.md#mcp"><img alt="MCP" src="https://img.shields.io/badge/MCP-supported-8B5CF6?style=flat-square&amp;labelColor=000000&amp;logo=modelcontextprotocol&amp;logoColor=white"></a>
   <a href="https://skills.sh/shy-tangerine/Sleeper"><img alt="skills.sh" src="https://img.shields.io/badge/skills.sh-install-06B6D4?style=flat-square&amp;labelColor=000000"></a>
-  <a href="../../skills/sleeper/SKILL.md"><img alt="Agent skill" src="https://img.shields.io/badge/agent_skill-included-84CC16?style=flat-square&amp;labelColor=000000"></a>
+  <a href="../../plugins/codex/sleeper/skills/sleeper/SKILL.md"><img alt="Agent skill" src="https://img.shields.io/badge/agent_skill-included-84CC16?style=flat-square&amp;labelColor=000000"></a>
   <br>
   <a href="https://github.com/shy-tangerine/Sleeper/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/shy-tangerine/Sleeper?style=flat-square&amp;labelColor=000000&amp;color=FACC15&amp;logo=github&amp;logoColor=white"></a>
   <a href="https://github.com/shy-tangerine/Sleeper/releases"><img alt="Downloads" src="https://img.shields.io/github/downloads/shy-tangerine/Sleeper/total?style=flat-square&amp;labelColor=000000&amp;color=38BDF8"></a>
@@ -100,7 +100,7 @@ sleeper type --role textbox --name Search 'your query' --clear
 sleeper press Enter
 ```
 
-La [skill incluida](../../skills/sleeper/SKILL.md) explica cómo seleccionar la sesión, verificar las acciones y recuperar la conexión. Los agentes pueden usar directamente las herramientas MCP; la [guía de comandos](../../docs/commands.md) cubre pestañas, extracción, recetas y llamadas a APIs.
+La [skill incluida](../../plugins/codex/sleeper/skills/sleeper/SKILL.md) explica cómo seleccionar la sesión, verificar las acciones y recuperar la conexión. Los agentes pueden usar directamente las herramientas MCP; la [guía de comandos](../../docs/commands.md) cubre pestañas, extracción, recetas y llamadas a APIs.
 
 | En espera | Trabajando |
 |:---:|:---:|
@@ -176,7 +176,7 @@ La prueba de Chrome utilizó Google Chrome for Testing, la distribución de Chro
 | `extension/` | Manifiestos, controladores de página, ventana emergente e iconos |
 | `daemon/` | Relay HTTP/WebSocket y servidor MCP |
 | `cli/` | CLI, recetas y adaptadores |
-| `skills/` | Instrucciones para agentes |
+| `plugins/codex/sleeper/skills/` | Instrucciones para agentes |
 | `examples/` | Recetas y esquemas de extracción |
 | `test/` | Pruebas de comportamiento, transporte y paquetes |
 

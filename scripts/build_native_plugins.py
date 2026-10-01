@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Generate the Claude Code and Codex Sleeper plugin adapters.
 
-The repository skill is the source of truth; generated plugins only package it
-with each client's manifest and MCP launcher declaration.
+The Codex plugin's skill is the source of truth; the Claude plugin packages
+the same instructions with its manifest and MCP launcher declaration.
 """
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ import shutil
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SKILL = ROOT / "skills" / "sleeper" / "SKILL.md"
+SKILL = ROOT / "plugins/codex/sleeper/skills/sleeper/SKILL.md"
 DESCRIPTION = "Inspect and control an existing local browser session through Sleeper MCP tools."
 VERSION = json.loads((ROOT / "extension" / "manifest.json").read_text(encoding="utf-8"))["version"]
 
@@ -25,10 +25,11 @@ def write_json(path: Path, value: object) -> None:
 def build() -> None:
     for client, manifest_dir in (("claude", ".claude-plugin"), ("codex", ".codex-plugin")):
         target = ROOT / "plugins" / client / "sleeper"
-        if target.exists():
-            shutil.rmtree(target)
-        (target / "skills" / "sleeper").mkdir(parents=True)
-        shutil.copytree(SKILL.parent, target / "skills" / "sleeper", dirs_exist_ok=True)
+        packaged_skill = target / "skills" / "sleeper"
+        if packaged_skill != SKILL.parent:
+            if packaged_skill.exists():
+                shutil.rmtree(packaged_skill)
+            shutil.copytree(SKILL.parent, packaged_skill)
         (target / "assets").mkdir(exist_ok=True)
         shutil.copy2(ROOT / "extension/icon-active.svg", target / "assets/icon.svg")
         manifest = {

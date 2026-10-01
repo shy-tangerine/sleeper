@@ -21,8 +21,8 @@ set -uo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TEST_DIR="$ROOT/test"
-PYTHON_BIN="${SLEEPER_TEST_PYTHON:-python3}"
-[ -x "$ROOT/.venv/bin/python" ] && PYTHON_BIN="$ROOT/.venv/bin/python"
+PYTHON_BIN="${SLEEPER_TEST_PYTHON:-$ROOT/.venv/bin/python}"
+[ -n "${SLEEPER_TEST_PYTHON:-}" ] || [ -x "$PYTHON_BIN" ] || PYTHON_BIN=python3
 cd "$ROOT"
 
 PASS=0
@@ -88,38 +88,13 @@ fi
 
 echo "== Sleeper regression harness =="
 echo "repo: $ROOT"
-node "$ROOT/test/api_host_policy_test.js" || fail "api host policy behavioral test"
-node "$ROOT/test/daemon_endpoint_test.js" || fail "daemon endpoint validation test"
-node "$ROOT/test/mobile_onboarding_test.js" || fail "mobile onboarding behavioral test"
-node "$ROOT/test/android_background_test.js" || fail "Firefox Android background compatibility test"
-node "$ROOT/test/tailscale_setup_test.js" || fail "Tailscale setup behavioral test"
-node "$ROOT/test/screenshot_transport_test.js"
-node "$ROOT/test/screenshot_behavior_test.js"
-node "$ROOT/test/focus_policy_test.js"
-node "$ROOT/test/action_icon_timing_test.js"
-node "$ROOT/test/action_correctness_test.js"
-node "$ROOT/test/action_log_test.js"
-node "$ROOT/test/action_showcase_test.js"
-node "$ROOT/test/action_labels_test.js" || fail "action label contract test"
-node "$ROOT/test/background_tabs_test.js"
-node "$ROOT/test/background_network_test.js"
-node "$ROOT/test/background_network_download_test.js" || fail "background download wait test"
-node "$ROOT/test/background_waitxhr_test.js" || fail "background waitXhr dispatch test"
-node "$ROOT/test/background_page_hooks_test.js" || fail "Chromium page-hook injection test"
-node "$ROOT/test/content_dialog_idle_test.js" || fail "idle dialog behavior test"
-node "$ROOT/test/locators_test.js"
-node "$ROOT/test/locator_handlers_test.js" || fail "screenshot transport bound wiring"
-node "$ROOT/test/activity_test.js" || fail "activity cue behavior harness"
-if node "$ROOT/test/icon_state_test.js"; then
-  pass "icon state wiring harness"
-else
-  fail "icon state wiring harness"
-fi
-if node "$ROOT/test/browser_identity_test.js"; then
-  pass "browser identity harness"
-else
-  fail "browser identity harness"
-fi
+for test_file in "$TEST_DIR"/*_test.js; do
+  if node "$test_file"; then
+    pass "$(basename "$test_file")"
+  else
+    fail "$(basename "$test_file")"
+  fi
+done
 
 # ---------------------------------------------------------------- [1] syntax
 echo

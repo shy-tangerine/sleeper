@@ -69,7 +69,7 @@ def _plugin_env(tmp_path, skill_dir):
 def test_plugin_migration_removes_matching_managed_skill(tmp_path):
     skill_dir = tmp_path / "home" / ".agents" / "skills" / "sleeper"
     import shutil
-    shutil.copytree(ROOT / "skills" / "sleeper", skill_dir)
+    shutil.copytree(ROOT / "plugins/codex/sleeper/skills/sleeper", skill_dir)
     (skill_dir / ".sleeper-managed").write_text("Sleeper managed skill\n")
     env, _ = _plugin_env(tmp_path, skill_dir)
     result = run_installer(env, "--plugins", "codex", "--non-interactive")
@@ -79,7 +79,7 @@ def test_plugin_migration_removes_matching_managed_skill(tmp_path):
 def test_plugin_migration_preserves_modified_managed_skill(tmp_path):
     skill_dir = tmp_path / "home" / ".agents" / "skills" / "sleeper"
     import shutil
-    shutil.copytree(ROOT / "skills" / "sleeper", skill_dir)
+    shutil.copytree(ROOT / "plugins/codex/sleeper/skills/sleeper", skill_dir)
     (skill_dir / "SKILL.md").write_text((skill_dir / "SKILL.md").read_text() + "\nCustom note\n")
     (skill_dir / ".sleeper-managed").write_text("Sleeper managed skill\n")
     env, _ = _plugin_env(tmp_path, skill_dir)

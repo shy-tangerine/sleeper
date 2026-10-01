@@ -7,7 +7,7 @@
 <p align="center">
   <a href="docs/agent-skill.md#mcp"><img alt="MCP" src="https://img.shields.io/badge/MCP-supported-8B5CF6?style=flat-square&amp;labelColor=000000&amp;logo=modelcontextprotocol&amp;logoColor=white"></a>
   <a href="https://skills.sh/shy-tangerine/Sleeper"><img alt="skills.sh" src="https://img.shields.io/badge/skills.sh-install-06B6D4?style=flat-square&amp;labelColor=000000"></a>
-  <a href="skills/sleeper/SKILL.md"><img alt="Agent skill" src="https://img.shields.io/badge/agent_skill-included-84CC16?style=flat-square&amp;labelColor=000000"></a>
+  <a href="plugins/codex/sleeper/skills/sleeper/SKILL.md"><img alt="Agent skill" src="https://img.shields.io/badge/agent_skill-included-84CC16?style=flat-square&amp;labelColor=000000"></a>
   <br>
   <a href="https://github.com/shy-tangerine/Sleeper/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/shy-tangerine/Sleeper?style=flat-square&amp;labelColor=000000&amp;color=FACC15&amp;logo=github&amp;logoColor=white"></a>
   <a href="https://github.com/shy-tangerine/Sleeper/releases"><img alt="Downloads" src="https://img.shields.io/github/downloads/shy-tangerine/Sleeper/total?style=flat-square&amp;labelColor=000000&amp;color=38BDF8"></a>
@@ -134,7 +134,7 @@ sleeper press Enter
 
 While an agent is working, Sleeper can show a small on-page activity message such as **“Opening a page…”**, **“Clicked an element”**, or **“Timed out waiting for the page.”** These messages use plain language rather than CLI/MCP command names. Typed values, uploaded file contents, and other sensitive action values are not shown. Visible activity can be turned off in the extension settings; the toolbar still exposes connection and access state.
 
-The included [agent skill](skills/sleeper/SKILL.md) covers session selection, action verification, and connection recovery. Agents can use MCP tools directly; the [command guide](docs/commands.md) covers tab targets, extraction, recipes, and API calls.
+The included [agent skill](plugins/codex/sleeper/skills/sleeper/SKILL.md) covers session selection, action verification, and connection recovery. Agents can use MCP tools directly; the [command guide](docs/commands.md) covers tab targets, extraction, recipes, and API calls.
 
 | Waiting | Working |
 |:---:|:---:|
@@ -196,7 +196,7 @@ The Chrome check used Google Chrome for Testing, the automation distribution of 
 | `extension/` | Browser manifests, page handlers, popup, icons |
 | `daemon/` | HTTP/WebSocket relay and MCP server |
 | `cli/` | CLI, recipes, adapter support |
-| `skills/` | Agent instructions |
+| `plugins/codex/sleeper/skills/` | Agent instructions |
 | `examples/` | Recipes and extraction schemas |
 | `test/` | Behavioral, transport, and package checks |
 

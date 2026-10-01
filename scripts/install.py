@@ -865,7 +865,7 @@ def _restart_linux_service():
 
 
 def _skill_is_unmodified(shared_skill):
-    canonical = Path(__file__).resolve().parents[1] / "skills/sleeper"
+    canonical = root_skills_dir()
     if not (shared_skill / ".sleeper-managed").is_file() or not canonical.is_dir():
         return False
     source_files = {p.relative_to(canonical): p.read_bytes() for p in canonical.rglob("*") if p.is_file()}
@@ -1063,7 +1063,7 @@ def _reconcile_skill(args, choices, plugin_result):
 
 
 def root_skills_dir():
-    return Path(__file__).resolve().parents[1] / "skills/sleeper"
+    return Path(__file__).resolve().parents[1] / "plugins/codex/sleeper/skills/sleeper"
 
 
 def _read_source_id(package):
