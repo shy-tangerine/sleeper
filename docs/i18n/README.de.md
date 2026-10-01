@@ -7,7 +7,7 @@
 <p align="center">
   <a href="../../docs/agent-skill.md#mcp"><img alt="MCP" src="https://img.shields.io/badge/MCP-supported-8B5CF6?style=flat-square&amp;labelColor=000000&amp;logo=modelcontextprotocol&amp;logoColor=white"></a>
   <a href="https://skills.sh/shy-tangerine/Sleeper"><img alt="skills.sh" src="https://img.shields.io/badge/skills.sh-install-06B6D4?style=flat-square&amp;labelColor=000000"></a>
-  <a href="../../skills/sleeper/SKILL.md"><img alt="Agent skill" src="https://img.shields.io/badge/agent_skill-included-84CC16?style=flat-square&amp;labelColor=000000"></a>
+  <a href="../../plugins/codex/sleeper/skills/sleeper/SKILL.md"><img alt="Agent skill" src="https://img.shields.io/badge/agent_skill-included-84CC16?style=flat-square&amp;labelColor=000000"></a>
   <br>
   <a href="https://github.com/shy-tangerine/Sleeper/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/shy-tangerine/Sleeper?style=flat-square&amp;labelColor=000000&amp;color=FACC15&amp;logo=github&amp;logoColor=white"></a>
   <a href="https://github.com/shy-tangerine/Sleeper/releases"><img alt="Downloads" src="https://img.shields.io/github/downloads/shy-tangerine/Sleeper/total?style=flat-square&amp;labelColor=000000&amp;color=38BDF8"></a>
@@ -100,7 +100,7 @@ sleeper type --role textbox --name Search 'your query' --clear
 sleeper press Enter
 ```
 
-Der enthaltene [Agent-Skill](../../skills/sleeper/SKILL.md) behandelt Sitzungswahl, Aktionsprüfung und Wiederherstellung der Verbindung. Agenten können MCP-Werkzeuge direkt verwenden; der [Kommando-Leitfaden](../commands.md) erklärt Tab-Ziele, Extraktion, Rezepte und API-Aufrufe.
+Der enthaltene [Agent-Skill](../../plugins/codex/sleeper/skills/sleeper/SKILL.md) behandelt Sitzungswahl, Aktionsprüfung und Wiederherstellung der Verbindung. Agenten können MCP-Werkzeuge direkt verwenden; der [Kommando-Leitfaden](../commands.md) erklärt Tab-Ziele, Extraktion, Rezepte und API-Aufrufe.
 
 | Wartend | Aktiv |
 |:---:|:---:|
@@ -176,7 +176,7 @@ Der Chrome-Test verwendete Google Chrome for Testing, die Chrome-Distribution f�
 | `extension/` | Browser-Manifeste, Seiten-Handler, Popup, Symbole |
 | `daemon/` | HTTP/WebSocket-Relay und MCP-Server |
 | `cli/` | CLI, Rezepte, Adapter-Unterstützung |
-| `skills/` | Agenten-Anweisungen |
+| `plugins/codex/sleeper/skills/` | Agenten-Anweisungen |
 | `examples/` | Rezepte und Extraktionsschemas |
 | `test/` | Verhaltens-, Transport- und Paketprüfungen |
 

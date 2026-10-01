@@ -236,7 +236,10 @@
       const lines = args.lines || args.limit;
       const limit = Number(lines) > 0 ? Number(lines) : 50;
       const inj = await injectPageWorld(tabId, CONSOLE_HOOK_PAGE, "console", installConsoleHookMain, []);
-      if (!inj.ok) { sendError(msg.id, inj.error); return; }
+      if (!inj.ok) {
+        sendResult(msg.id, { entries: [], note: "page-world console hook could not be installed: " + inj.error });
+        return;
+      }
       const ready = await waitForHookReady(tabId, "console", 250);
       const out = (CONSOLE_LOG.get(tabId) || []).slice(-limit);
       if (!ready) {

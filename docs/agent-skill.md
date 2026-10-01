@@ -1,6 +1,6 @@
 # Agent setup
 
-Sleeper includes two complementary interfaces: MCP exposes callable tools, and the [Sleeper skill](../skills/sleeper/SKILL.md) teaches an agent how to select a session, inspect a page, perform an action, and verify the result. Installing MCP alone exposes tool schemas but does not provide the complete workflow.
+Sleeper includes two complementary interfaces: MCP exposes callable tools, and the [Sleeper skill](../plugins/codex/sleeper/skills/sleeper/SKILL.md) teaches an agent how to select a session, inspect a page, perform an action, and verify the result. Installing MCP alone exposes tool schemas but does not provide the complete workflow.
 
 ## Native plugins
 
@@ -101,7 +101,7 @@ For clients that accept JSON MCP configuration:
 
 Use the launcher's absolute path printed by the installer if a desktop client does not inherit your terminal's `PATH`. Configuration locations and approval steps depend on the client; there is no universal MCP registration file. A native Sleeper plugin supplies this configuration and the skill together, so that client does not also need standalone copies.
 
-Reload your agent client and open browsers with the Sleeper extension loaded. Start with `sleeper_sessions`, select its stable installation ID from page context, and pass that ID as `profile` on each relevant MCP tool call. Then call `sleeper_tabs` with the selected ID and select a `tab` when the browser has more than one target. An empty list means browser setup or connection recovery is still needed. Follow the skill's [setup reference](../skills/sleeper/references/setup.md).
+Reload your agent client and open browsers with the Sleeper extension loaded. Start with `sleeper_sessions`, select its stable installation ID from page context, and pass that ID as `profile` on each relevant MCP tool call. Then call `sleeper_tabs` with the selected ID and select a `tab` when the browser has more than one target. An empty list means browser setup or connection recovery is still needed. Follow the skill's [setup reference](../plugins/codex/sleeper/skills/sleeper/references/setup.md).
 
 The CLI and MCP expose different subsets of functionality. Agents should use the declared MCP tool schemas and consult `sleeper --help` for CLI operations, rather than translating flags directly into tool arguments.
 
@@ -109,7 +109,7 @@ Sleeper's transient on-page cue, toolbar popup, and recent-action history use pl
 
 ## Distribution through skills.sh
 
-The skill lives at `skills/sleeper/SKILL.md`, with its supporting references beside it. Install it from GitHub with:
+The canonical skill lives at `plugins/codex/sleeper/skills/sleeper/SKILL.md`, with its supporting references beside it. Install it from GitHub with:
 
 ```bash
 npx skills add shy-tangerine/Sleeper --skill sleeper --global
