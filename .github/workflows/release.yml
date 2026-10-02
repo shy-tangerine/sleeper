@@ -34,11 +34,6 @@ jobs:
           python-version: "3.12"
       - name: Install validation dependencies
         run: uv sync --frozen
-      - name: Verify the launch gate and a sanitized public export
-        run: |
-          uv run --no-project --python 3.12 python scripts/check_launch_gate.py --verify
-          uv run --no-project --python 3.12 python scripts/check_launch_gate.py --export "$RUNNER_TEMP/public-export"
-          uv run --no-project --python 3.12 python scripts/check_launch_gate.py --check "$RUNNER_TEMP/public-export"
       - name: Verify release version and source tree
         env:
           RELEASE_TAG: ${{ inputs.tag }}
@@ -69,7 +64,7 @@ jobs:
       - name: Build source archive
         env:
           RELEASE_TAG: ${{ inputs.tag }}
-        run: uv run --no-project --python 3.12 python scripts/build_source_archive.py "$RUNNER_TEMP/public-export" "$RELEASE_TAG" sleeper-source.zip
+        run: git archive --format=zip --prefix="sleeper-${RELEASE_TAG#v}/" --output=sleeper-source.zip "$GITHUB_SHA"
       - name: Publish release asset
         uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
         with:

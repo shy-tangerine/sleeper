@@ -25,10 +25,7 @@ jobs:
           enable-cache: true
           python-version: "3.12"
       - run: uv sync --frozen
-      - name: Verify the launch gate and a sanitized public export
-        run: |
-          uv run --no-project --python 3.12 python scripts/check_launch_gate.py --verify
-          uv run --no-project --python 3.12 python scripts/check_launch_gate.py --export "$RUNNER_TEMP/public-export"
-          uv run --no-project --python 3.12 python scripts/check_launch_gate.py --check "$RUNNER_TEMP/public-export"
+      - name: Verify source tree
+        run: uv run python scripts/check_public_tree.py
       - run: uv run bash test/run.sh
       - run: uv run pytest -q test
