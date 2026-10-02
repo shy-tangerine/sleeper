@@ -125,6 +125,8 @@ async function acceptHarness(overrides = {}) {
       pending_tailscale_instance_id: "mock-instance",
     });
   assert.equal(replacing.storageState.daemon_http_url, "https://old.example.ts.net:8790");
+  assert.equal(replacing.storageState.daemon_ws_url, "wss://old.example.ts.net:8789/ws");
+  assert.equal(replacing.storageState.daemon_auth_token, "old-pairing-secret");
 
   const approved = await setup.approveOffer(
       replacing.chromeApi,
@@ -132,6 +134,8 @@ async function acceptHarness(overrides = {}) {
     );
   assert.equal(approved.ok, true);
   assert.equal(replacing.storageState.daemon_http_url, "https://desktop.example.ts.net:8790");
+  assert.equal(replacing.storageState.daemon_ws_url, "wss://desktop.example.ts.net:8789/ws");
+  assert.equal(replacing.storageState.daemon_auth_token, "pairing-secret");
   assert.deepEqual(replacing.removals, [[
       "pending_tailscale_http_url", "pending_tailscale_ws_url",
       "pending_tailscale_auth_token", "pending_tailscale_instance_id",

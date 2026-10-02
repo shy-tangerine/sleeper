@@ -61,11 +61,11 @@ class McpContract(unittest.TestCase):
                 pass
 
         with patch.object(mcp_server.http.client, "HTTPConnection", Connection):
-            self._call("sleeper_click", {"selector": "#go", "tab": "42"})
+            self._call("sleeper_click", {"selector": "#go", "tab": "id:42"})
 
         self.assertEqual(captured["timeout"], 65)
         self.assertNotIn(b" ", captured["raw_body"])
-        self.assertEqual(captured["body"], {"cmd": "click", "args": {"selector": "#go"}, "tab": "42"})
+        self.assertEqual(captured["body"], {"cmd": "click", "args": {"selector": "#go"}, "tab": "id:42"})
         self.assertNotIn("Authorization", captured["headers"])
         self.assertEqual(captured["headers"]["X-Sleeper-Instance"], "mock-instance")
         self.assertTrue(captured["headers"]["X-Sleeper-Proof"])

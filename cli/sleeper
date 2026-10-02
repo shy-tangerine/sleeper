@@ -3,7 +3,7 @@
 # Usage: sleeper <cmd> [args...]  →  POST /command to the daemon
 #   sleeper sessions | state | tabs
 #   sleeper find 'input[placeholder*="Buscar"]'
-#   Most DOM/content commands accept a trailing [--tab IDX|URL-SUBSTR] to target
+#   Most DOM/content commands accept [--tab id:123|IDX|URL-SUBSTR] to target
 #   a hidden tab (the background auto-activates it before routing the command).
 #   sleeper click 'button[type=submit]'
 #   sleeper click_all 'a.buy'
@@ -23,9 +23,9 @@
 #   sleeper snapshot
 #   sleeper scroll 400 | scroll --selector 'footer'
 #   sleeper tabs
-#   sleeper goto 'https://…' [--tab IDX|URL-SUBSTR]
-#   sleeper wait_url 'sso/register' [--timeout 15000] [--tab IDX|URL-SUBSTR]
-#   sleeper network [--media] [--since=60] [--clear] [--tab IDX|URL-SUBSTR]
+#   sleeper goto 'https://…' [--tab id:123]
+#   sleeper wait_url 'sso/register' [--timeout 15000] [--tab id:123]
+#   sleeper network [--media] [--since=60] [--clear] [--tab id:123]
 #   sleeper api '/backend-api/...' [--method GET|POST|DELETE] [--body '{"k":v}']
 #   sleeper scroll_until [--container C] [--text X] [--selector S] [--max 40]
 #   sleeper wait_dialog [--text X] [--timeout 15000]
@@ -38,7 +38,7 @@
 #   sleeper check '<selector>' | uncheck '<selector>'
 #   sleeper wait_xhr '<url_substring>' [--method GET|POST|DELETE] [--timeout 15000]
 #   sleeper recipe '<name>' [--json]   (execute a JSON recipe from recipes/<name>.json)
-#   sleeper schema '<name>' [--tab IDX|URL-SUBSTR] [--url URL] [--json]
+#   sleeper schema '<name>' [--tab id:123] [--url URL] [--json]
 #       (extract via a reusable schema from schemas/<name>.json; optional --url
 #        or schema.url is gotos'd first, results shaped by the schema fields)
 #   sleeper dialog

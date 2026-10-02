@@ -127,6 +127,8 @@ TOOL_CMD = {
 
 def _tool(name, desc, props, required=None, additional_properties=False):
     props = dict(props)
+    if "tab" in props:
+        props["tab"] = {**props["tab"], "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."}
     props.setdefault("profile", {
         "type": "string",
         "description": "Browser ID from sleeper_sessions; optional with one connected browser.",
@@ -164,7 +166,7 @@ TOOLS = [
     _tool("sleeper_state", "Get page state for the selected Sleeper profile (url, title, focus, visibility)", {}),
     _tool("sleeper_sessions", "List connected stable browser installation IDs for routing", {}),
     _tool("sleeper_tabs", "List tabs in the selected Sleeper browser profile", {}),
-    _tool("sleeper_snapshot", "Headings/inputs/buttons/links summary", {"tab": {"type": "string", "description": "tab index or URL substring"}}),
+    _tool("sleeper_snapshot", "Headings/inputs/buttons/links summary", {"tab": {"type": "string"}}),
     _tool("sleeper_goto", "Navigate to URL", {"url": {"type": "string"}, "tab": {"type": "string"}}, ["url"]),
     _tool("sleeper_back", "History back", {"tab": {"type": "string"}}),
     _tool("sleeper_frames", "List cross-origin iframes", {}),

@@ -37,7 +37,7 @@ class DocumentationContract(unittest.TestCase):
             ('waitFor', {'selector': '.loaded', 'timeout': 15000}),
             ('extract', {'map': {'title': 'h1', 'items': '.result'}}),
             ('snapshot', {}), ('newtab', {'url': 'https://example.com'}),
-            ('selecttab', {'target': '0'}), ('closetab', {'target': '0'}),
+            ('selecttab', {'target': 'id:123'}), ('closetab', {'target': 'id:123'}),
             ('waitDownload', {'pattern': 'report.csv', 'timeout_ms': 15000}),
             ('network', {'since': 60}), ('api', {'url': '/api/example', 'method': 'GET'}),
             ('shot', {'full_page': True, 'annotate': True, 'width': 1280, 'height': 800}),

@@ -37,7 +37,7 @@ Setup and targeting:
   sleeper bind BROWSER_ID                 save a project binding
   sleeper mobile setup                    connect Firefox Android through Tailscale
   --profile BROWSER_ID                    target a browser (or bind one)
-  --tab INDEX_OR_URL                      target a tab
+  --tab ID_OR_INDEX_OR_URL                 prefer id:123 from tab list
 
 Commands:
   state | tabs | snapshot | frames

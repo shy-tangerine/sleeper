@@ -69,7 +69,7 @@
 
     function snapshot() {
       return orderedEntries().map(({ misses, index: windowIndex, ...rest }, index) => ({
-        ...rest, index, windowIndex,
+        ...rest, index, windowIndex, selector: `id:${rest.tabId}`,
       }));
     }
 
@@ -91,6 +91,11 @@
         if (all[0]) return all[0].tabId;
         fail("no active tab", tab);
       }
+      if (typeof tab === "string" && tab.startsWith("id:")) {
+        const id = /^id:\d+$/.test(tab) ? Number(tab.slice(3)) : NaN;
+        if (Number.isSafeInteger(id) && entries.has(id)) return id;
+        fail("tab not found by id: " + tab + "; re-list tabs if the browser session was restored", tab);
+      }
       if (typeof tab === "string" && /^\d+$/.test(tab)) tab = Number(tab);
       if (typeof tab === "number") {
         const ordered = orderedEntries();
@@ -99,8 +104,9 @@
       }
       if (typeof tab === "string" && tab.length > 0) {
         const substring = tab.toLowerCase();
-        const byUrl = pick((entry) => (entry.url || "").toLowerCase().includes(substring));
-        if (byUrl != null) return byUrl;
+        const matches = all.filter((entry) => (entry.url || "").toLowerCase().includes(substring));
+        if (matches.length === 1) return matches[0].tabId;
+        if (matches.length > 1) fail("ambiguous tab URL: " + tab + "; use an id: selector from tab list", tab);
         fail("tab not found by url: " + tab, tab);
       }
       fail("invalid tab: " + tab, tab);
