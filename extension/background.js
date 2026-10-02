@@ -588,7 +588,7 @@ async function routePageCommand(msg) {
   else if (focusMode === "needed" && !((msg.args || {}).no_activate === true) && isMutatingCommand(msg.cmd) && await tabNeedsActivation(tabId)) {
     await autoActivateTab(tabId, msg, true);
   }
-  if (typeof SleeperChromiumDebugger !== "undefined" && (msg.cmd === "exec" || msg.cmd === "waitUntil")) {
+  if (typeof SleeperChromiumDebugger !== "undefined" && (msg.cmd === "exec" || (msg.cmd === "waitUntil" && !(msg.args || {}).condition))) {
     try {
       result = msg.cmd === "exec"
         ? await SleeperChromiumDebugger.exec(chrome, tabId, msg.args || {})

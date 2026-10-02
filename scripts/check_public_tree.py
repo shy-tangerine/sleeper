@@ -28,6 +28,7 @@ PUBLIC_ALLOWLIST = {
     "test/background_waitxhr_test.js",
     "test/test_launch_gate.py",
     "test/background_page_hooks_test.js",
+    "test/background_page_routing_test.js",
     "test/debugger_eval_test.js",
     "test/newtab_retry_test.js",
     "test/waittext_rendered_test.js",

@@ -19,6 +19,7 @@ COMMAND_ALIASES = {"eval": "exec", "fill": "fillForm", "fill_form": "fillForm", 
 TAB_COMMANDS = {"list": "tabs", "new": "newtab", "select": "selecttab", "close": "closetab"}
 POSITIONAL_FIELDS = {
     "batch": ("actions",),
+    "exec": ("code",),
     "goto": ("url",), "newtab": ("url",), "find_text": ("text",), "findText": ("text",),
     "click_text": ("text",), "clickText": ("text",), "wait_text": ("text",), "wait_url": ("pattern",),
     "waitText": ("text",), "wait_xhr": ("url_substring",), "waitXhr": ("url_substring",), "waitUntil": ("predicate",), "waitFor": ("selector",), "waitDownload": ("pattern",), "press": ("key", "selector"), "selecttab": ("target",), "closetab": ("target",), "api": ("url",),
@@ -128,11 +129,16 @@ def _auth_headers(token: str, instance_id: str, method: str, path: str, body: by
             "X-Sleeper-Preamble": preamble}
 
 
-def decode(value: str):
+def decode(value: str, field: str | None = None):
+    if field == "code":
+        return value
     try:
-        return json.loads(value)
+        parsed = json.loads(value)
     except json.JSONDecodeError:
         return value
+    # JavaScript predicates remain source strings; only objects select the
+    # structured-condition API. JSON scalars must not lose their source text.
+    return value if field == "predicate" and not isinstance(parsed, dict) else parsed
 
 
 def session_profile() -> str | None:
@@ -226,7 +232,7 @@ def _apply_flag(payload: dict, command: str, flag_token: str, next_value: str | 
         value = "true" if next_value is None else next_value
     else:
         value = inline_value if has_inline else "true"
-    decoded = True if (not has_inline and key in BOOLEAN_OPTIONS) else decode(value)
+    decoded = True if (not has_inline and key in BOOLEAN_OPTIONS) else decode(value, key)
     if key in {"profile", "tab"}:
         if value == "true":
             raise ValueError(f"--{key.replace('_', '-')} requires a value")
@@ -256,7 +262,7 @@ def _assign_positional(payload: dict, command: str, positional: list[str]) -> No
                 payload["args"][fields[-1]].append(decode(value))
                 continue
             raise ValueError(f"too many positional arguments for {command}")
-        decoded = decode(value)
+        decoded = decode(value, fields[index])
         if fields[index] in {"files", "keys"} and isinstance(decoded, str):
             decoded = [decoded]
         payload["args"][fields[index]] = decoded
