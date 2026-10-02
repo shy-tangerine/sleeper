@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Sleeper controlled-input regression fixture</title>
+<h1>Controlled-input regression fixture</h1>
+<p>This page tests the current Sleeper handlers against real React and Vue inputs.</p>
+<div id="react"></div>
+<div id="vue"><label>Vue search <input id="vue-input" v-model="query"></label><output id="vue-value">{{ query }}</output></div>
+<pre id="results">Running...</pre>
+<script src="../../node_modules/react/umd/react.development.js"></script>
+<script src="../../node_modules/react-dom/umd/react-dom.development.js"></script>
+<script src="../../node_modules/vue/dist/vue.global.prod.js"></script>
+<script src="../../extension/locators.js"></script>
+<script src="../../extension/sleeper.js"></script>
+<script>
+function ControlledInput({ id, reject = false }) {
+  const [value, setValue] = React.useState("");
+  return React.createElement("label", null, id,
+    React.createElement("input", {
+      id, value,
+      onChange: event => setValue(reject ? "" : event.target.value),
+    }),
+    React.createElement("output", { id: id + "-value" }, value));
+}
+ReactDOM.flushSync(() => ReactDOM.createRoot(document.querySelector("#react")).render(
+  React.createElement(React.Fragment, null,
+    React.createElement(ControlledInput, { id: "react-input" }),
+    React.createElement(ControlledInput, { id: "react-reject", reject: true }))));
+Vue.createApp({ data: () => ({ query: "" }) }).mount("#vue");
+
+const fixtureResults = [];
+async function check(name, test) {
+  try { await test(); fixtureResults.push({ name, ok: true }); }
+  catch (error) { fixtureResults.push({ name, ok: false, error: error.message }); }
+}
+function equal(actual, expected) {
+  if (actual !== expected) throw new Error(JSON.stringify({ actual, expected }));
+}
+async function persisted(selector, output, text, options = {}) {
+  await handlers.type({ selector, text, ...options });
+  // Verify both DOM and model after another render/task tick.
+  await new Promise(resolve => setTimeout(resolve, 50));
+  equal(document.querySelector(selector).value, text);
+  equal(document.querySelector(output).textContent, text);
+}
+(async () => {
+  for (const framework of ["react", "vue"]) {
+    const selector = "#" + framework + "-input";
+    const output = framework === "react" ? "#react-input-value" : "#vue-value";
+    await check(framework + " controlled value", () => persisted(
+      selector, output, "Sleeper search"));
+    await check(framework + " clear and stealth", () => persisted(
+      selector, output, "Next", { clear: true, stealth: true }));
+    await check(framework + " empty value", () => persisted(
+      selector, output, ""));
+  }
+  await check("React rejects value loudly", async () => {
+    let rejected = false;
+    try { await handlers.type({ selector: "#react-reject", text: "rejected" }); }
+    catch (error) {
+      if (!/target rejected the value/.test(error.message)) throw error;
+      rejected = true;
+    }
+    equal(rejected, true);
+    equal(document.querySelector("#react-reject").value, "");
+    equal(document.querySelector("#react-reject-value").textContent, "");
+  });
+  document.querySelector("#results").textContent = JSON.stringify(fixtureResults, null, 2);
+  document.title = fixtureResults.every(result => result.ok) ? "PASS: controlled inputs" : "FAIL: controlled inputs";
+})();
+</script>
+</html>

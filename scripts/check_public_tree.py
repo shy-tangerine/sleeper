@@ -143,6 +143,8 @@ PUBLIC_ALLOWLIST = {
     "test/test_firefox_android_iteration.py",
     "test/test_source_identity.py",
     "test/tailscale_setup_test.js",
+    "test/fixtures/README.md",
+    "test/fixtures/controlled-inputs.html",
     "test/test_tailscale_mobile.py",
     "test/test_uv_install.py",
     "plugins/claude/sleeper/.claude-plugin/plugin.json",
