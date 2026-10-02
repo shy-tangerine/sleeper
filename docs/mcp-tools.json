@@ -96,7 +96,7 @@
       "properties": {
         "tab": {
           "type": "string",
-          "description": "tab index or URL substring"
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -117,7 +117,8 @@
           "type": "string"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -137,7 +138,8 @@
       "type": "object",
       "properties": {
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -173,7 +175,8 @@
           "type": "string"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -194,7 +197,8 @@
           "type": "string"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -220,7 +224,8 @@
           "type": "boolean"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -243,7 +248,8 @@
           "type": "string"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -266,7 +272,8 @@
           "type": "string"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -298,7 +305,8 @@
           "type": "string"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -321,7 +329,8 @@
           "type": "string"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -344,7 +353,8 @@
           "type": "string"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -376,7 +386,8 @@
           "type": "boolean"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -403,7 +414,8 @@
           }
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -429,7 +441,8 @@
           "type": "string"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -452,7 +465,8 @@
           "type": "string"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -485,7 +499,8 @@
           "type": "string"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -514,7 +529,8 @@
           "type": "string"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -540,7 +556,8 @@
           "type": "integer"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -569,7 +586,8 @@
           "type": "integer"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -603,7 +621,8 @@
           "type": "integer"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -627,7 +646,8 @@
           "type": "integer"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -650,7 +670,8 @@
           "type": "string"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -673,7 +694,8 @@
           "type": "string"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -694,7 +716,8 @@
           "type": "object"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -720,7 +743,8 @@
           "type": "string"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -744,7 +768,8 @@
           "type": "object"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -770,7 +795,8 @@
           "type": "string"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -800,7 +826,8 @@
           "type": "integer"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -824,7 +851,8 @@
           "type": "integer"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -863,7 +891,8 @@
           "type": "string"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -887,7 +916,8 @@
           "type": "boolean"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -914,7 +944,8 @@
           "type": "integer"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -940,7 +971,8 @@
           "type": "integer"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -963,7 +995,8 @@
           "type": "integer"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -981,7 +1014,8 @@
       "type": "object",
       "properties": {
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -999,7 +1033,8 @@
       "type": "object",
       "properties": {
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -1042,7 +1077,8 @@
           }
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -1069,7 +1105,8 @@
           "type": "string"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -1093,7 +1130,8 @@
           "type": "string"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -1116,7 +1154,8 @@
           "type": "string"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",
@@ -1139,7 +1178,8 @@
           "type": "string"
         },
         "tab": {
-          "type": "string"
+          "type": "string",
+          "description": "Prefer the stable id: selector from sleeper_tabs. Numeric indices change when tabs move; URL substrings must match exactly one tab."
         },
         "profile": {
           "type": "string",

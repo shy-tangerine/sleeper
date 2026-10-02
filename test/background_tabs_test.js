@@ -103,4 +103,41 @@ queriedTabs.filter(tab => tab.windowId === 2).forEach((tab, index) => { tab.inde
 registry.refresh();
 assertListedSelectors();
 assert.strictEqual(registry.resolve("example.test/28"), 328, "URL selectors remain unchanged");
+
+// Issue #23: a saved selector must survive moves, insertions, and closes.
+const stableTarget = registry.snapshot().find(tab => tab.tabId === 328).selector;
+assert.strictEqual(stableTarget, "id:328");
+queriedTabs.unshift({ id: 900, windowId: 0, index: 0, url: "https://example.test/28" });
+queriedTabs.find(tab => tab.id === 328).index = 100;
+registry.refresh();
+assert.strictEqual(registry.resolve(stableTarget), 328);
+assert.throws(() => registry.resolve("example.test/28"), /ambiguous tab URL/);
+for (const invalid of ["id:missing", "id:-1", "id:1.5", "id:9007199254740992", "id:135"]) {
+  assert.throws(() => registry.resolve(invalid), /tab not found by id/);
+}
+
+const navigated = [];
+chromeApi.tabs.update = (id, options, callback) => {
+  navigated.push({ id, url: options.url });
+  callback({ url: options.url });
+};
+chromeApi.tabs.onUpdated = { addListener() {}, removeListener() {} };
+context.setTimeout = callback => callback();
+context.GOTO_SETTLE_TIMEOUT_MS = 0;
+const gotoHandler = background.slice(background.indexOf("function handleGotoCommand("), background.indexOf("// Diagnostic: resolve"));
+vm.runInNewContext(gotoHandler, context);
+context.handleGotoCommand({ id: 5, args: { tab: stableTarget, url: "https://destination.test" } });
+assert.deepStrictEqual(navigated, [{ id: 328, url: "https://destination.test" }], "goto uses the saved ID after a reorder");
+context.handleTabLifecycleCommand({ id: 6, cmd: "closetab", args: { target: stableTarget } });
+assert.strictEqual(removed.at(-1), 328, "close uses the same saved ID after a reorder");
+
+// A restored page with a new ID must never substitute for the closed tab.
+queriedTabs.push({ id: 901, windowId: 2, index: 100, url: "https://example.test/28" });
+registry.refresh();
+const previousErrors = errors.length;
+context.handleGotoCommand({ id: 7, args: { tab: stableTarget, url: "https://wrong.test" } });
+context.handleTabLifecycleCommand({ id: 8, cmd: "closetab", args: { target: stableTarget } });
+assert.strictEqual(errors.length, previousErrors + 2);
+assert.strictEqual(navigated.length, 1, "missing IDs never navigate a replacement tab");
+assert.strictEqual(removed.at(-1), 328, "missing IDs never close a replacement tab");
 console.log("background tab registry tests passed");

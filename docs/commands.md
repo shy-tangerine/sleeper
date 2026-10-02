@@ -28,8 +28,8 @@ sleeper wait '.loaded' --timeout 15000
 sleeper extract '{"title":"h1","items":".result"}'
 sleeper snapshot
 sleeper tab new 'https://example.com'
-sleeper tab select 0
-sleeper tab close 0
+sleeper tab select id:123
+sleeper tab close id:123
 sleeper wait download 'report.csv' --timeout 15000
 sleeper network --since=60
 sleeper api '/api/example' --method GET
@@ -88,7 +88,11 @@ Arbitrary JavaScript through `exec` and JavaScript-string predicates through
 `wait_until` are Chromium-only. Firefox returns an explicit unsupported-command
 error; all structured browser controls remain available.
 
-Numeric tab selectors (including `tab close`, `tab select`, and `--tab`) use the zero-based `index` shown by `tab list`, ordered by window and then tab position. `windowIndex` is the browser’s position within its window; `tabId` is browser metadata, not a numeric selector. Re-list after tabs move, open, or close before using another positional selector. DOM commands that support `--tab` accept this index or a URL substring. Prefer an exact, unambiguous target when several tabs share a host. Screenshots are returned as PNG data URLs in a JSON response, capped at 3.75 MiB of encoded image data. Larger captures return an error; reduce the viewport or capture the visible area. See the security and browser limitations below.
+Use the `selector` returned by `tab list`, such as `id:123`, for `--tab`, `tab close`, and `tab select`. For example, `sleeper goto 'https://example.com' --tab id:123` navigates that exact browser tab even after tabs move, open, or close. A missing ID fails without falling back to a different tab. Browser IDs last for the lifetime of a tab; after a browser restart or session restore, re-list and identify the intended tab again.
+
+Numeric selectors remain supported as the zero-based `index` shown by `tab list`, ordered by window and tab position. They are positional and can target a different tab after the inventory changes. `windowIndex` is the browser's position within its window. URL substrings must match exactly one tab; ambiguous matches fail with a request to use an `id:` selector.
+
+Screenshots are returned as PNG data URLs in a JSON response, capped at 3.75 MiB of encoded image data. Larger captures return an error; reduce the viewport or capture the visible area. See the security and browser limitations below.
 
 [OpenCLI compatibility](OPENCLI-PARITY.md) lists aliases and platform differences. `analyze` inspects URL strings; it does not crawl or prove a site's automation compatibility. `adapter init NAME` creates a local adapter scaffold and `adapter verify NAME` checks it.
 
