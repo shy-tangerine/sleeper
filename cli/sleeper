@@ -3,8 +3,9 @@
 # Usage: sleeper <cmd> [args...]  →  POST /command to the daemon
 #   sleeper sessions | state | tabs
 #   sleeper find 'input[placeholder*="Buscar"]'
-#   Most DOM/content commands accept [--tab id:123|IDX|URL-SUBSTR] to target
-#   a hidden tab (the background auto-activates it before routing the command).
+#   Mutations require --tab id:123, or an active tab created by newtab.
+#   --allow-user-tab permits changes to an explicit tab Sleeper did not create.
+#   Read-only commands also accept --tab IDX or a unique URL substring.
 #   sleeper click 'button[type=submit]'
 #   sleeper click_all 'a.buy'
 #   sleeper type 'input[name=q]' 'macbook pro' [--clear] [--stealth]
@@ -63,6 +64,9 @@ j() {
 jb() { j "$1"; }
 post_payload() {
   local payload="$1"
+  if [ "${allow_user_tab:-false}" = true ]; then
+    payload=$(python3 -c 'import json,sys; p=json.loads(sys.argv[1]); p.setdefault("args", {})["allow_user_tab"]=True; print(json.dumps(p))' "$payload")
+  fi
   payload=$(apply_profile "$payload")
   if [ "${SLEEPER_DRY_RUN:-0}" = "1" ]; then
     printf '%s\n' "$payload"
@@ -333,6 +337,18 @@ run_semantic_fill() {
 
 cmd="${1:-}"; shift || true
 
+# Strip the shared opt-in before command-specific parsers and early paths.
+allow_user_tab=false
+command_args=()
+for argument in "$@"; do
+  if [ "$argument" = "--allow-user-tab" ]; then
+    allow_user_tab=true
+  else
+    command_args+=("$argument")
+  fi
+done
+set -- "${command_args[@]}"
+
 if [ "$cmd" = "--version" ] || [ "$cmd" = "version" ]; then
   echo "Sleeper 2.0.1"
   exit 0
@@ -460,7 +476,17 @@ case "$cmd" in
     [ -n "$target" ] || { echo "error: tab action requires a target" >&2; exit 1; }
     payload="{\"cmd\":\"$cmd\",\"args\":{\"target\":$(j "$target")}}"
     ;;
-  back)      payload='{"cmd":"back"}' ;;
+  back|dialog)
+    tab=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --tab) tab="${2:?tab}"; shift 2 ;;
+        *) shift ;;
+      esac
+    done
+    payload="{\"cmd\":\"$cmd\",\"args\":{}}"
+    [ -z "$tab" ] || payload="{\"cmd\":\"$cmd\",\"args\":{\"tab\":$(j "$tab")}}"
+    ;;
   frames)    payload='{"cmd":"frames"}' ;;
   get)
     sel=""
@@ -1100,9 +1126,6 @@ print("saved "+out)' "$outfile" || exit $?
     extra="${method:+, \"method\":$(j "$method")}"
     payload="{\"cmd\":\"waitXhr\",\"args\":{\"url_substring\":$(j "$url_sub"),\"timeout_ms\":$timeout_ms$extra}}"
     ;;
-
-  dialog) payload='{"cmd":"dialog","args":{}}' ;;
-
   recipe) run_recipe "${1:-}" "${2:-}" && exit 0 || exit $? ;;
 
   schema) run_schema "$@" && exit 0 || exit $? ;;

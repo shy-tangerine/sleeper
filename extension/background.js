@@ -195,20 +195,16 @@ const markTabConnected = tabRegistry.markConnected;
 const markTabDisconnected = tabRegistry.markDisconnected;
 const registrySnapshot = tabRegistry.snapshot;
 
-// Resolve a `tab` param against the registry (G1/G2). Defaults to the active
-// tab; otherwise a NUMBER is the 0-based position in the `sleeper tabs`
-// listing (same ordering tabs renders), and a non-numeric STRING is a
-// url-substring match. Resolution is FOCUS-FREE: it is based purely on the
-// registry, never on which window/tab happens to have OS focus, so a target
-// tab selected by url-substring or position is addressed correctly even when
-// it is not the focused/active tab. Numbers are NEVER treated as raw browser
-// tabIds — those are arbitrary and unrelated to the listing order, so doing
-// so previously sent a numeric target to the wrong tab.
-const resolveTabId = tabRegistry.resolve;
+// Fresh, focus-free lookup. Mutations require stable selectors and ownership;
+// read-only commands may also use positions or unique URL substrings.
+const resolveTabId = (tab, msg) => tabRegistry.resolve(tab, {
+  mutating: !!msg && isMutatingCommand(msg.cmd, msg.args),
+  allowUserTab: !!msg && (msg.args || {}).allow_user_tab === true,
+});
 
 const pageHooks = SleeperBackgroundPageHooks.createPageHooks(chrome);
 const handleConsole = (msg) => pageHooks.handleConsole(msg, resolveTabId, sendResult, sendError);
-const handleDialog = (msg) => pageHooks.handleDialog(msg, resolveTabId, sendResult, sendError);
+const handleDialog = (msg) => pageHooks.handleDialog(msg, tab => resolveTabId(tab, msg), sendResult, sendError);
 
 // ---------------------------------------------------------------------------
 // Reply helpers for background-side commands (no page round-trip).
@@ -241,10 +237,10 @@ function sendScreenshotResult(id, dataUrl) {
   SleeperScreenshot.sendResult(sendResult, sendError, id, dataUrl);
 }
 
-function handleScreenshotCommand(msg) {
+async function handleScreenshotCommand(msg) {
   let tabId;
   try {
-    tabId = resolveTabId((msg.args && msg.args.tab));
+    tabId = await resolveTabId((msg.args && msg.args.tab));
   } catch (error) {
     sendError(msg.id, String(error.message || error));
     return;
@@ -273,7 +269,7 @@ function sendError(id, error) {
 
 // `network` (and its `media` alias): report captured requests, optionally
 // re-fetch one of them from the background. `clear` empties the log first.
-function handleNetworkCommand(msg) {
+async function handleNetworkCommand(msg) {
   const args = msg.args || {};
   if (args.clear) {
     NET_LOG.clear();
@@ -282,7 +278,7 @@ function handleNetworkCommand(msg) {
   }
   let tabId;
   try {
-    tabId = resolveTabId(args.tab);
+    tabId = await resolveTabId(args.tab);
   } catch (e) {
     sendError(msg.id, String(e.message || e));
     return;
@@ -328,11 +324,11 @@ function handleNetworkCommand(msg) {
 }
 
 // `media` normalizes to a media-scoped network query (no fetch branch).
-function handleMediaCommand(msg) {
+async function handleMediaCommand(msg) {
   msg.args = Object.assign({}, msg.args || {}, {media: true});
   const args = msg.args;
   let tabId;
-  try { tabId = resolveTabId(args.tab); } catch (e) {
+  try { tabId = await resolveTabId(args.tab); } catch (e) {
     sendError(msg.id, String(e.message || e)); return;
   }
   sendResult(msg.id, netResponse(args, tabId));
@@ -345,9 +341,9 @@ function handleTabsCommand(msg) {
 
 // OpenCLI-compatible tab lifecycle commands run in the background context,
 // before page-target routing.
-function handleTabLifecycleCommand(msg) {
+async function handleTabLifecycleCommand(msg) {
   let targetId;
-  try { targetId = resolveTabId(msg.args && (msg.args.tab ?? msg.args.target)); }
+  try { targetId = await resolveTabId(msg.args && (msg.args.tab ?? msg.args.target), msg); }
   catch (e) { sendError(msg.id, String(e.message || e)); return; }
   if (msg.cmd === "selecttab") {
     chrome.tabs.update(targetId, { active: true }, (t) => {
@@ -359,6 +355,7 @@ function handleTabLifecycleCommand(msg) {
     chrome.tabs.remove(targetId, () => {
       if (chrome.runtime.lastError) { sendError(msg.id, String(chrome.runtime.lastError.message)); return; }
       TAB_REGISTRY.delete(targetId);
+      tabRegistry.owned.delete(targetId);
       refreshRegistry();
       sendResult(msg.id, { closed: targetId });
     });
@@ -376,28 +373,29 @@ function handleNewTabCommand(msg) {
       sendError(msg.id, String(chrome.runtime.lastError.message));
       return;
     }
+    tabRegistry.owned.add(t.id);
     refreshRegistry();
     sendResult(msg.id, { tabId: t.id, url: (t && t.url) || url, requested: url, navigating: (t && t.url) !== url && url !== "about:blank" });
   });
 }
 
-// G1: navigate an existing tab to a url (active by default; also resolves
-// tabId, window-relative index, or url-substring). The reply waits for the
-// navigation to settle (status complete or an error page) so follow-up
+// G1: navigate an owned tab, or an explicitly opted-in user tab. The reply
+// waits for navigation to settle (status complete or an error page) so follow-up
 // commands act on the NEW page, not the old one racing teardown. A hard cap
 // keeps an unresponsive server from hanging the caller.
 const GOTO_SETTLE_TIMEOUT_MS = 15000;
 
-function handleGotoCommand(msg) {
+async function handleGotoCommand(msg) {
   const args = msg.args || {};
   let tabId;
   try {
-    tabId = resolveTabId(args.tab);
+    tabId = await resolveTabId(args.tab, msg);
   } catch (e) {
     sendError(msg.id, String(e.message || e));
     return;
   }
   const url = args.url || "";
+  const previousUrl = TAB_REGISTRY.get(tabId).url;
   chrome.tabs.update(tabId, { url }, (t) => {
     if (chrome.runtime.lastError) {
       // Firefox reports browser-native wording ("Illegal URL: …") for schemes
@@ -410,10 +408,10 @@ function handleGotoCommand(msg) {
       return;
     }
     refreshRegistry();
-    const settle = (completedUrl) => {
-      const currentUrl = completedUrl || (t && t.url) || url;
-      sendResult(msg.id, { tabId, url: currentUrl, requested: url, navigating: url !== "" && currentUrl !== url });
-    };
+    const settle = () => chrome.tabs.get(tabId, (tab) => {
+      const currentUrl = (!chrome.runtime.lastError && tab && tab.url) || (t && t.url) || url;
+      sendResult(msg.id, { tabId, previousUrl, newUrl: currentUrl, url: currentUrl, requested: url, navigating: url !== "" && currentUrl !== url });
+    });
     // Same-URL navigations (or about:blank) may not emit onUpdated; the
     // update callback's URL plus a short grace check covers those.
     let settled = false;
@@ -422,9 +420,7 @@ function handleGotoCommand(msg) {
       if (changeInfo.status === "complete" || changeInfo.status === "unloaded") {
         settled = true;
         chrome.tabs.onUpdated.removeListener(listener);
-        chrome.tabs.get(tabId, (tab) => {
-          settle(chrome.runtime.lastError ? undefined : tab && tab.url);
-        });
+        settle();
       }
     };
     chrome.tabs.onUpdated.addListener(listener);
@@ -432,16 +428,16 @@ function handleGotoCommand(msg) {
       if (settled) return;
       settled = true;
       chrome.tabs.onUpdated.removeListener(listener);
-      settle(undefined);
+      settle();
     }, GOTO_SETTLE_TIMEOUT_MS);
   });
 }
 
 // Diagnostic: resolve + tabs.get only (splits tab lookup from capture).
-function handleTabInfoCommand(msg) {
+async function handleTabInfoCommand(msg) {
   let tabId;
   try {
-    tabId = resolveTabId((msg.args && msg.args.tab));
+    tabId = await resolveTabId((msg.args && msg.args.tab));
   } catch (e) {
     sendError(msg.id, String(e.message || e));
     return;
@@ -536,7 +532,7 @@ function handleApiCommand(msg) {
 // dropped. This is the one deliberate behavior fix in the table refactor:
 // waitXhr now actually waits for a future completion, matching the waitXhrOnce contract in
 // background_network.js ({url_sub, method, tabId, timeout}).
-function handleWaitXhrCommand(msg) {
+async function handleWaitXhrCommand(msg) {
   const args = msg.args || {};
   const timeout = Number(args.timeout_ms) > 0 ? Number(args.timeout_ms) : 15000;
   waitXhrOnce({
@@ -544,7 +540,7 @@ function handleWaitXhrCommand(msg) {
     // sends url_sub) - accept all spellings so the filter is never dropped.
     urlSub: String(args.url_sub || args.url_substring || args.url || ""),
     method: args.method,
-    tabId: args.tab !== undefined && args.tab !== null && args.tab !== "" ? resolveTabId(args.tab) : null,
+    tabId: args.tab !== undefined && args.tab !== null && args.tab !== "" ? await resolveTabId(args.tab) : null,
     timeout,
   }).then((result) => sendResult(msg.id, result));
 }
@@ -575,7 +571,7 @@ async function routePageCommand(msg) {
   // addressed even when not focused/active.
   let tabId;
   try {
-    tabId = resolveTabId((msg.args || {}).tab);
+    tabId = await resolveTabId((msg.args || {}).tab, msg);
   } catch (e) {
     sendError(msg.id, String(e.message || e));
     return;
@@ -585,7 +581,7 @@ async function routePageCommand(msg) {
   const focusMode = await getFocusMode();
   let result;
   if (focusMode === "always") await autoActivateTab(tabId, msg, true);
-  else if (focusMode === "needed" && !((msg.args || {}).no_activate === true) && isMutatingCommand(msg.cmd) && await tabNeedsActivation(tabId)) {
+  else if (focusMode === "needed" && !((msg.args || {}).no_activate === true) && isMutatingCommand(msg.cmd, msg.args) && await tabNeedsActivation(tabId)) {
     await autoActivateTab(tabId, msg, true);
   }
   if (typeof SleeperChromiumDebugger !== "undefined" && (msg.cmd === "exec" || (msg.cmd === "waitUntil" && !(msg.args || {}).condition))) {
@@ -603,8 +599,8 @@ async function routePageCommand(msg) {
   try {
     result = await routeToTab(tabId, msg);
   } catch (error) {
-    const safeMutationFallback = isMutatingCommand(msg.cmd) && isDefinitelyNoDelivery(error);
-    if (focusMode !== "needed" || !isUnreachableError(error) || (isMutatingCommand(msg.cmd) && !safeMutationFallback)) throw error;
+    const safeMutationFallback = isMutatingCommand(msg.cmd, msg.args) && isDefinitelyNoDelivery(error);
+    if (focusMode !== "needed" || !isUnreachableError(error) || (isMutatingCommand(msg.cmd, msg.args) && !safeMutationFallback)) throw error;
     await autoActivateTab(tabId, msg, true);
     result = await routeToTab(tabId, msg, 0, true);
   }
@@ -942,11 +938,12 @@ function tabNeedsActivation(tabId) {
 // Commands that can change page state must never be replayed after an
 // uncertain message delivery. A lost callback cannot tell us whether the
 // browser executed the command before the connection failed.
-function isMutatingCommand(command) {
+function isMutatingCommand(command, args = {}) {
+  if (String(command).toLowerCase() === "waituntil" && !(args || {}).condition) return true;
   return new Set([
     "click", "clickall", "clicktext", "dblclick", "drag", "type", "fill", "fillform",
     "press", "keys", "select", "selectoption", "check", "uncheck", "focus", "scroll",
-    "scrolluntil", "upload", "eval", "exec", "submit", "back", "goto",
+    "scrolluntil", "scrollto", "hover", "navigate", "upload", "eval", "exec", "submit", "back", "goto", "closetab", "selecttab", "dialog",
   ]).has(String(command || "").toLowerCase());
 }
 
@@ -1084,8 +1081,12 @@ function makeUnreachableError(tabId, detail) {
 // soft-marks misses).
 chrome.tabs.onActivated.addListener(() => { refreshRegistry(); sendHello(); });
 chrome.tabs.onCreated.addListener(() => refreshRegistry());
+chrome.tabs.onMoved.addListener(() => refreshRegistry());
+chrome.tabs.onAttached.addListener(() => refreshRegistry());
+chrome.tabs.onDetached.addListener(() => refreshRegistry());
 chrome.tabs.onRemoved.addListener((tabId) => {
   TAB_REGISTRY.delete(tabId);
+  tabRegistry.owned.delete(tabId);
   pageHooks.clear(tabId);
   refreshRegistry();
 });

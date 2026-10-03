@@ -231,7 +231,7 @@
     async function handleConsole(msg, resolveTabId, sendResult, sendError) {
       const args = msg.args || {};
       let tabId;
-      try { tabId = resolveTabId(args.tab); }
+      try { tabId = await resolveTabId(args.tab); }
       catch (e) { sendError(msg.id, String((e && e.message) || e)); return; }
       const lines = args.lines || args.limit;
       const limit = Number(lines) > 0 ? Number(lines) : 50;
@@ -259,7 +259,7 @@
     async function handleDialog(msg, resolveTabId, sendResult, sendError) {
       const args = msg.args || {};
       let tabId;
-      try { tabId = resolveTabId(args.tab); }
+      try { tabId = await resolveTabId(args.tab); }
       catch (e) { sendError(msg.id, String((e && e.message) || e)); return; }
       const value = args.value != null ? String(args.value) : null;
       // A prior explicit dialog command may already have set
@@ -294,7 +294,7 @@
       if (!urlSub) { sendError(msg.id, "waitXhr: url_substring is required"); return; }
       let tabId = null;
       if (args.tab !== undefined && args.tab !== null && args.tab !== "") {
-        try { tabId = resolveTabId(args.tab); }
+        try { tabId = await resolveTabId(args.tab); }
         catch (e) { sendError(msg.id, String((e && e.message) || e)); return; }
       }
       const method = args.method ? String(args.method).toUpperCase() : null;

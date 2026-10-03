@@ -30,6 +30,7 @@ function event() {
 // without asking the user to copy it from the daemon token file.
 const storageData = {};
 let nativeMessageCount = 0;
+let tabQueries = 0;
 const beforeRequest = event();
 const onCompleted = event();
 const onErrorOccurred = event();
@@ -63,7 +64,8 @@ const chromeApi = {
   webRequest: { onBeforeRequest: beforeRequest, onCompleted, onErrorOccurred, onSendHeaders },
   tabs: {
     onActivated: event(), onCreated: event(), onRemoved: event(), onUpdated: event(),
-    query(_q, cb) { cb([{ id: 7, windowId: 1, index: 0, url: "https://developer.mozilla.org/", active: true }]); },
+    onMoved: event(), onAttached: event(), onDetached: event(),
+    query(_q, cb) { tabQueries++; cb([{ id: 7, windowId: 1, index: 0, url: "https://developer.mozilla.org/", active: true }]); },
     get(_id, cb) { cb(null); },
     sendMessage() {},
     create() {},
@@ -152,6 +154,11 @@ setTimeout(() => {
 function drain() { return new Promise((resolve) => setTimeout(resolve, 0)); }
 
 async function run() {
+  for (const name of ["onMoved", "onAttached", "onDetached"]) {
+    const before = tabQueries;
+    chromeApi.tabs[name].listeners.forEach(listener => listener(7, {}));
+    assert.equal(tabQueries, before + 1, name + " refreshes the registry");
+  }
   assert.equal(nativeMessageCount, 1, "fresh install obtains its token through the native host");
   assert.equal(storageData.daemon_token, "test-token", "paired token is persisted for reconnects");
   const sock = FakeWebSocket.instances[0];

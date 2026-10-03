@@ -28,7 +28,7 @@ POSITIONAL_FIELDS = {
     "upload": ("selector", "files"), "fill_form": ("fields",), "fillForm": ("fields",),
     "extract": ("map",), "keys": ("keys",),
 }
-BOOLEAN_OPTIONS = {"annotate", "clear", "exact", "full_page", "html", "media", "stealth", "value"}
+BOOLEAN_OPTIONS = {"allow_user_tab", "annotate", "clear", "exact", "full_page", "html", "media", "stealth", "value"}
 UNSUPPORTED_COMMANDS = {"adapter", "analyze", "recipe", "schema"}
 HELP = """usage: sleeper <command> [args...]
 
@@ -37,7 +37,9 @@ Setup and targeting:
   sleeper bind BROWSER_ID                 save a project binding
   sleeper mobile setup                    connect Firefox Android through Tailscale
   --profile BROWSER_ID                    target a browser (or bind one)
-  --tab ID_OR_INDEX_OR_URL                 prefer id:123 from tab list
+  --tab id:N                              required for explicit mutation targets
+  --allow-user-tab                        permit changes to a tab Sleeper did not create
+  Read-only commands also accept tab positions and unique URL substrings.
 
 Commands:
   state | tabs | snapshot | frames
@@ -50,7 +52,7 @@ Commands:
   select SELECTOR VALUE | check SELECTOR | uncheck SELECTOR
   extract '{"title":"h1","prices":".price"}'
   scroll N | scroll --selector SEL | scroll_until [--container C] [--text X] [--selector S]
-  goto URL | back | newtab URL | selecttab IDX | closetab IDX
+  goto URL | back | newtab URL | selecttab id:N | closetab id:N
   wait SELECTOR | wait_text TEXT | wait_until CONDITION | wait_url PATTERN
   wait_xhr URL_SUBSTRING [--method GET|POST|DELETE] [--timeout MS]
   wait_download PATTERN [--timeout MS]

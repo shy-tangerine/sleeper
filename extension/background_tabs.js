@@ -5,6 +5,7 @@
 
   function createTabRegistry(chromeApi) {
     const entries = new Map();
+    const owned = new Set();
     const pruneAfterMisses = 5;
 
     function upsert(tab) {
@@ -24,10 +25,10 @@
     }
 
     function refresh() {
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
         chromeApi.tabs.query({}, (tabs) => {
           if (chromeApi.runtime.lastError) {
-            resolve();
+            reject(new Error("cannot refresh tab registry: " + chromeApi.runtime.lastError.message));
             return;
           }
           const seen = new Set();
@@ -73,11 +74,23 @@
       }));
     }
 
-    function resolve(tab) {
-      const all = Array.from(entries.values());
+    async function resolve(tab, { mutating = false, allowUserTab = false } = {}) {
+      await refresh();
+      // Soft-retained entries tolerate restore churn in listings, but are
+      // never valid command targets unless the latest query saw them.
+      const all = Array.from(entries.values()).filter(entry => entry.misses === 0);
+      if (mutating && tab != null && tab !== "" && !/^id:\d+$/.test(String(tab))) {
+        throw new Error("mutating commands require an explicit id:N tab selector; use sleeper tabs");
+      }
+      const checked = (id) => {
+        if (mutating && !owned.has(id) && (!allowUserTab || tab == null || tab === "")) {
+          throw new Error("tab id:" + id + " was not created by Sleeper; use an explicit id:N selector with --allow-user-tab");
+        }
+        return id;
+      };
       const pick = (predicate) => {
         const match = all.find(predicate);
-        return match ? match.tabId : null;
+        return match ? checked(match.tabId) : null;
       };
       const fail = (message, value) => {
         const error = new Error(message);
@@ -88,17 +101,17 @@
       if (tab === undefined || tab === null || tab === "") {
         const active = pick((entry) => entry.active);
         if (active != null) return active;
-        if (all[0]) return all[0].tabId;
+        if (all[0]) return checked(all[0].tabId);
         fail("no active tab", tab);
       }
       if (typeof tab === "string" && tab.startsWith("id:")) {
         const id = /^id:\d+$/.test(tab) ? Number(tab.slice(3)) : NaN;
-        if (Number.isSafeInteger(id) && entries.has(id)) return id;
+        if (Number.isSafeInteger(id) && all.some(entry => entry.tabId === id)) return checked(id);
         fail("tab not found by id: " + tab + "; re-list tabs if the browser session was restored", tab);
       }
       if (typeof tab === "string" && /^\d+$/.test(tab)) tab = Number(tab);
       if (typeof tab === "number") {
-        const ordered = orderedEntries();
+        const ordered = orderedEntries().filter(entry => entry.misses === 0);
         if (Number.isInteger(tab) && tab >= 0 && tab < ordered.length) return ordered[tab].tabId;
         fail("tab not found at position " + tab + " (" + ordered.length + " tabs)", tab);
       }
@@ -112,7 +125,7 @@
       fail("invalid tab: " + tab, tab);
     }
 
-    return { entries, refresh, markConnected, markDisconnected, snapshot, resolve };
+    return { entries, owned, refresh, markConnected, markDisconnected, snapshot, resolve };
   }
 
   root.SleeperBackgroundTabs = { createTabRegistry };

@@ -92,10 +92,10 @@ class RoutingContract(unittest.TestCase):
         daemon.upsert(ws, {"profile": "firefox", "browser_id": "one",
                            "client_type": "extension"})
         result, routed = asyncio.run(
-            daemon._dispatch_once("click", {"selector": "#go"}, tab="23", profile="firefox"))
+            daemon._dispatch_once("click", {"selector": "#go", "allow_user_tab": True}, tab="id:23", profile="firefox"))
         self.assertTrue(routed)
         self.assertTrue(result["ok"])
-        self.assertEqual(ws.message["args"], {"selector": "#go", "tab": "23"})
+        self.assertEqual(ws.message["args"], {"selector": "#go", "allow_user_tab": True, "tab": "id:23"})
 
     def test_distinct_stable_ids_route_independently(self):
         first, second = object(), object()

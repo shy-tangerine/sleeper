@@ -25,6 +25,7 @@ function harness(searchMode = "callback") {
   let searchItems = [];
   const downloads = {
     onCreated: event(),
+    onMoved: event(), onAttached: event(), onDetached: event(),
     onChanged: event(),
     search(_query, callback) {
       if (searchMode === "promise") return Promise.resolve(searchItems);

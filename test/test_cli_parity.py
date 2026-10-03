@@ -56,3 +56,12 @@ def test_stable_tab_selectors_survive_cli_parsing():
             assert payload.get("tab", payload["args"].get("tab")) == "id:328"
         for command in ("close", "select"):
             assert run("tab", command, "id:328", python_cli=python_cli)["args"]["target"] == "id:328"
+
+
+def test_user_tab_opt_in_is_a_boolean_in_both_clis():
+    for python_cli in (False, True):
+        for command in (("goto", "https://example.test"), ("click", "button"), ("type", "input", "text"), ("tab", "close", "id:328")):
+            payload = run(*command, "--tab", "id:328", "--allow-user-tab", python_cli=python_cli)
+            assert payload["args"]["allow_user_tab"] is True
+        payload = run("click", "--allow-user-tab", "--role", "button", "--name", "Save", python_cli=python_cli)
+        assert payload["args"]["allow_user_tab"] is True

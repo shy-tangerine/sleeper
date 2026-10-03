@@ -90,7 +90,13 @@ error; all structured browser controls remain available.
 
 Use the `selector` returned by `tab list`, such as `id:123`, for `--tab`, `tab close`, and `tab select`. For example, `sleeper goto 'https://example.com' --tab id:123` navigates that exact browser tab even after tabs move, open, or close. A missing ID fails without falling back to a different tab. Browser IDs last for the lifetime of a tab; after a browser restart or session restore, re-list and identify the intended tab again.
 
-Numeric selectors remain supported as the zero-based `index` shown by `tab list`, ordered by window and tab position. They are positional and can target a different tab after the inventory changes. `windowIndex` is the browser's position within its window. URL substrings must match exactly one tab; ambiguous matches fail with a request to use an `id:` selector.
+Commands that change a tab or page, including `goto`, `click`, `type`, `back`, `dialog`, `tab select`, and `tab close`, require an explicit `id:N` selector. If no selector is supplied, only an active tab created by Sleeper's `newtab` is eligible. Bare numbers and URL substrings are rejected for mutations, even with `--allow-user-tab`.
+
+Sleeper records the IDs returned by `newtab`. Changing any other tab also requires `--allow-user-tab`, for example `sleeper goto 'https://example.com' --tab id:123 --allow-user-tab`. Ownership lasts for the current extension background session; after it restarts, use the explicit opt-in for previously created tabs. Closing a tab removes its ownership record.
+
+Read-only commands still accept the zero-based `index` shown by `tab list`, ordered by window and tab position, or a unique URL substring. Positions can change when tabs move, open, or close. Every resolution refreshes the browser inventory first. A tab absent from that fresh query is rejected even if retained in the cache during session restore. `windowIndex` is the browser's position within its window.
+
+`goto` returns `previousUrl` and `newUrl`. Its `url` field is the final observed URL after navigation settles, including redirects. If the settle timeout expires, it queries the current URL and reports whether navigation is still pending in `navigating`.
 
 Screenshots are returned as PNG data URLs in a JSON response, capped at 3.75 MiB of encoded image data. Larger captures return an error; reduce the viewport or capture the visible area. See the security and browser limitations below.
 
