@@ -117,6 +117,7 @@ PUBLIC_ALLOWLIST = {
     "scripts/build_packages.py",
     "scripts/sign-firefox.sh",
     "scripts/firefox-android-iterate.sh",
+    "scripts/firefox_android.py",
     "cli/adapter.py",
     "cli/recipe_cli.sh",
     "cli/sleeper",

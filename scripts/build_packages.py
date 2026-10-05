@@ -5,8 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import shutil
-import tempfile
+import subprocess
 import zipfile
 from pathlib import Path
 
@@ -31,42 +30,36 @@ def archive(source: Path, output: Path) -> str:
     return hashlib.sha256(output.read_bytes()).hexdigest()
 
 
-def source_identity(source: Path, manifest_name: str, kind: str) -> dict[str, str]:
+def source_identity(source: Path, members: dict[str, bytes], version: str) -> dict[str, str]:
     """Reproducible source identity for a dev package (issue #20).
 
     `commit` records the packaging git commit when available; `content`
     digests exactly the files the package embeds, so two builds from
     identical sources agree and a stale same-version package differs.
     """
-    import subprocess
-    manifest = json.loads((source / manifest_name).read_text(encoding="utf-8"))
-    names = [("manifest.json", source / "manifest.json")]
-    names += [(n, source / n) for n in RUNTIME_FILES if (source / n).is_file()]
-    if kind == "chromium":
-        names.append(("dynamic_code.js", source / "dynamic_code.js"))
-    names += [(n, source.parent / n) for n in ("LICENSE", "THIRD_PARTY_NOTICES.md") if (source.parent / n).is_file()]
     digest = hashlib.sha256()
-    for name, path in sorted(names):
+    for name, content in sorted(members.items()):
         digest.update(name.encode())
         digest.update(b"\0")
-        digest.update(path.read_bytes())
+        digest.update(content)
     try:
         commit = subprocess.run(["git", "-C", str(source.parent), "rev-parse", "HEAD"],
                                 capture_output=True, text=True, check=True).stdout.strip()
-    except Exception:
+    except (OSError, subprocess.CalledProcessError):
         commit = "unknown"
-    return {"commit": commit, "content": digest.hexdigest()[:16], "version": str(manifest.get("version"))}
+    return {"commit": commit, "content": digest.hexdigest()[:16], "version": version}
 
 
-def extension_package(kind: str, source: Path, output: Path) -> str:
-    manifest_name = "manifest.json" if kind == "firefox" else "manifest.chromium.json"
+def extension_members(kind: str, source: Path) -> dict[str, bytes]:
+    """One file set for archives and the Android development runner."""
+    manifest_name = "manifest.chromium.json" if kind == "chromium" else "manifest.json"
     manifest = json.loads((source / manifest_name).read_text(encoding="utf-8"))
     if not manifest.get("version"):
         raise ValueError(f"{manifest_name} has no version")
-    identity = source_identity(source, manifest_name, kind)
+    if kind == "firefox-android":
+        manifest["permissions"] = [p for p in manifest["permissions"] if p != "nativeMessaging"]
     members: dict[str, bytes] = {
         "manifest.json": json.dumps(manifest, separators=(",", ":")).encode(),
-        "SOURCE_ID": "commit={commit}\ncontent={content}\nversion={version}\n".format(**identity).encode(),
     }
     for name in RUNTIME_FILES:
         path = source / name
@@ -82,6 +75,13 @@ def extension_package(kind: str, source: Path, output: Path) -> str:
     missing = required - members.keys()
     if missing:
         raise ValueError(f"extension package missing: {', '.join(sorted(missing))}")
+    identity = source_identity(source, members, str(manifest["version"]))
+    members["SOURCE_ID"] = "commit={commit}\ncontent={content}\nversion={version}\n".format(**identity).encode()
+    return members
+
+
+def extension_package(kind: str, source: Path, output: Path) -> str:
+    members = extension_members(kind, source)
     output.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as archive_file:
         for name in sorted(members):
@@ -93,7 +93,7 @@ def extension_package(kind: str, source: Path, output: Path) -> str:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("kind", nargs="?", choices=("firefox", "chromium"))
+    parser.add_argument("kind", nargs="?", choices=("firefox", "firefox-android", "chromium"))
     parser.add_argument("source", type=Path)
     parser.add_argument("output", type=Path)
     args = parser.parse_args()

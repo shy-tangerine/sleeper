@@ -1,7 +1,7 @@
 # Android setup
 
-> **Status: beta.** The Firefox-for-Android flow works end to end but is
-> younger than the desktop paths and needs a Tailscale tailnet; report Android
+> **Status: beta.** Firefox for Android needs an Android-specific package
+> and a Tailscale tailnet; report Android
 > issues as [bug reports](https://github.com/shy-tangerine/Sleeper/issues/new?template=bug_report.md).
 
 Sleeper uses Tailscale Serve as its only mobile-access path. The daemon stays
@@ -33,11 +33,13 @@ a terminal QR code. The command changes only Tailscale Serve ports 8789 and
 ## Phone setup
 
 1. Install Tailscale on the phone and join the same tailnet.
-2. Install the AMO-signed Sleeper add-on in Firefox for Android.
+2. Install an AMO-signed Android Sleeper package in Firefox for Android.
+   The desktop package requests `nativeMessaging`, which Android rejects.
 3. Scan the QR code from `sleeper mobile setup`, or open its setup URL in
    Firefox.
-4. Sleeper verifies the daemon, saves the HTTPS/WSS endpoints in the browser
-   profile, and opens its connection settings.
+4. Sleeper verifies the daemon and opens its connection settings. When
+   replacing an existing pairing, the current daemon stays connected until
+   you approve the proposed endpoint in those settings.
 
 The setup link is a secret: share it only with the intended browser. The
 extension stores the bearer locally and uses it for authenticated `/tabs` and
@@ -78,7 +80,7 @@ the persistent add-on. This workflow reloads source changes only; it is not a
 production self-update channel, and add-on storage should be treated as
 replaceable during the run.
 
-For extension development, use the unpacked source with Mozilla's supported
+For extension development, use the runner with Mozilla's supported
 `web-ext` Android target. First enable Firefox Nightly remote debugging and
 Android USB or Wi-Fi debugging, then confirm the device is visible to ADB:
 
@@ -92,14 +94,19 @@ scripts/firefox-android-iterate.sh --adb-device SERIAL \
 The script runs:
 
 ```bash
-node_modules/.bin/web-ext run --source-dir extension --target firefox-android \
+node_modules/.bin/web-ext run --source-dir TEMP_ANDROID_SOURCE --target firefox-android \
   --adb-device SERIAL --firefox-apk org.mozilla.fenix
 ```
 
-`web-ext run` installs the unpacked add-on temporarily into Firefox for
-Android's main browser profile, watches `extension/`, and reloads the add-on
-after source changes. Because it uses the manifest ID, it can replace a
-the persistent AMO Sleeper add-on with that same ID; when the run exits, the
+The runner generates a temporary Android source directory from `extension/`,
+omitting the desktop-only `nativeMessaging` permission. It mirrors runtime
+and manifest changes into that directory, which `web-ext` watches to reload
+the add-on. The source manifest retains desktop native messaging. The
+temporary directory is removed when the runner exits.
+
+`web-ext run` installs the add-on temporarily into Firefox for Android's main
+browser profile. Because it uses the manifest ID, it can replace the
+persistent AMO Sleeper add-on with that same ID; when the run exits, the
 temporary add-on may be removed and the persistent add-on may not be restored.
 Back up or intentionally uninstall the persistent add-on before using the
 explicit replacement acknowledgement above. This workflow does not change
@@ -122,9 +129,16 @@ Firefox does not treat a locally built unsigned XPI as a production update.
 Persistent add-on updates require a signed package and an update manifest (or
 distribution through AMO); this repository deliberately has no `update_url`.
 For local iteration, `web-ext run` and its Gecko remote-debugger install/reload
-protocol are the supported mechanism. Build `build/sleeper.xpi` for a manual
-package check, or use the AMO-signed artifact described in
-[`firefox-signing.md`](firefox-signing.md) for persistent installation.
+protocol are the supported mechanism. Build an Android package for inspection:
+
+```bash
+python3 scripts/build_packages.py firefox-android extension build/sleeper-android.xpi
+```
+
+This unsigned package is for development. Persistent installation requires
+AMO signing of the Android package. The existing desktop signing workflow in
+[`firefox-signing.md`](firefox-signing.md) produces a desktop artifact and
+does not establish Android compatibility.
 
 References: [Firefox for Android extension development](https://extensionworkshop.com/documentation/develop/developing-extensions-for-firefox-for-android/)
 and the [`web-ext run` command reference](https://extensionworkshop.com/documentation/develop/web-ext-command-reference/).
