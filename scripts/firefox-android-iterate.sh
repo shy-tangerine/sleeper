@@ -15,8 +15,8 @@ usage() {
   cat <<'EOF'
 Usage: scripts/firefox-android-iterate.sh [options]
 
-Run the unpacked extension in Firefox for Android Nightly. web-ext watches
-extension/ and reloads the temporary development install after each change.
+Run the Android extension in Firefox Nightly. Source changes are mirrored to
+a temporary Android package that web-ext watches and reloads.
 
 Options:
   --adb-device SERIAL  select one device (required when more than one is found)
@@ -67,8 +67,7 @@ else
 fi
 
 [[ -x "$WEB_EXT_BIN" ]] || { echo "pinned web-ext is not installed; run npm ci --ignore-scripts" >&2; exit 1; }
-web_ext_cmd=("$WEB_EXT_BIN")
-command=("${web_ext_cmd[@]}" run --source-dir "$ROOT/extension" --target firefox-android --adb-device "$DEVICE" --firefox-apk "$FIREFOX_APK")
+command=(python3 "$ROOT/scripts/firefox_android.py" "$WEB_EXT_BIN" run --source-dir "$ROOT/extension" --target firefox-android --adb-device "$DEVICE" --firefox-apk "$FIREFOX_APK")
 echo "Firefox Android development install: device=$DEVICE apk=$FIREFOX_APK"
 echo "This uses web-ext's temporary install and file watcher; Ctrl-C cleans up when the debugger remains connected."
 if ((DRY_RUN)); then
